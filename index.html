@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tommy Hilfiger · Photo Shoot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!--                  START SCREEN                  -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div id="screen-start" class="screen active">
+
+        <!-- TH flag stripe bar — top decoration -->
+        <div class="th-flag-bar">
+            <div class="th-flag-navy"></div>
+            <div class="th-flag-white"></div>
+            <div class="th-flag-red"></div>
+        </div>
+
+        <div class="start-content">
+            <!-- TH badge emblem — mirrors the real logo shape -->
+            <div class="th-emblem" aria-hidden="true">
+                <div class="emblem-text">T O M M Y</div>
+                <div class="emblem-flag">
+                    <div class="emblem-white"></div>
+                    <div class="emblem-red"></div>
+                </div>
+                <div class="emblem-text">H I L F I G E R</div>
+            </div>
+
+            <h1 class="start-brand">TOMMY HILFIGER</h1>
+            <p class="start-event">PHOTO SHOOT</p>
+            <p class="start-sub">3 SHOTS &nbsp;·&nbsp; ARRANGE &nbsp;·&nbsp; PRINT A3</p>
+            <button id="btn-start" class="btn-primary btn-glow">START</button>
+        </div>
+
+        <!-- Shown only when page is not in a secure context -->
+        <div id="insecure-warning" class="insecure-warning hidden">
+            <div class="iw-icon">⚠️</div>
+            <div class="iw-body">
+                <strong>Camera unavailable — insecure origin</strong>
+                <p>
+                    Browsers only allow camera access over <code>https://</code> or <code>localhost</code>.
+                    Your current URL uses plain <code>http://</code>.
+                </p>
+                <p class="iw-fix">With Laravel Herd, open the app at:</p>
+                <code class="iw-url" id="iw-url">https://camera.test</code>
+                <p class="iw-alt">Herd automatically provisions HTTPS for <code>.test</code> sites.</p>
+            </div>
+        </div>
+
+        <p class="start-footer">Camera access required · <span id="origin-badge"></span></p>
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!--                 CAMERA SCREEN                  -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div id="screen-camera" class="screen">
+
+        <!-- Top bar -->
+        <div class="cam-header">
+            <button id="btn-retake-camera" class="btn-ghost">← Back</button>
+
+            <div class="cam-wordmark">TOMMY HILFIGER</div>
+
+            <div class="cam-header-right">
+                <div class="shot-indicators">
+                    <div class="dot" id="ind-1"></div>
+                    <div class="dot" id="ind-2"></div>
+                    <div class="dot" id="ind-3"></div>
+                </div>
+                <div class="shot-label">
+                    <span id="shot-current">0</span> / 3
+                </div>
+            </div>
+        </div>
+
+        <!-- Video + overlays -->
+        <div class="cam-viewport">
+            <video id="camera-video" autoplay playsinline muted></video>
+
+            <!-- Countdown -->
+            <div id="countdown-overlay" class="countdown-overlay hidden">
+                <span id="countdown-number" class="countdown-num">3</span>
+            </div>
+
+            <!-- Flash -->
+            <div id="flash-overlay" class="flash-overlay"></div>
+
+            <!-- Captured strip (bottom-right) -->
+            <div class="capture-strip">
+                <div class="strip-cell" id="strip-1"><span class="cell-label">1</span></div>
+                <div class="strip-cell" id="strip-2"><span class="cell-label">2</span></div>
+                <div class="strip-cell" id="strip-3"><span class="cell-label">3</span></div>
+            </div>
+        </div>
+
+        <!-- Status bar -->
+        <div class="cam-footer">
+            <span id="camera-status" class="status-text">Initialising…</span>
+        </div>
+
+        <!-- Hidden capture canvas -->
+        <canvas id="capture-canvas" style="display:none"></canvas>
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!--                 REVIEW SCREEN                  -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div id="screen-review" class="screen">
+        <div class="th-flag-bar">
+            <div class="th-flag-navy"></div>
+            <div class="th-flag-white"></div>
+            <div class="th-flag-red"></div>
+        </div>
+        <div class="review-layout">
+            <p class="review-brand">TOMMY HILFIGER</p>
+            <h2 class="review-title">YOUR SHOTS</h2>
+            <div class="review-strip" id="review-strip"></div>
+            <button id="btn-review-next" class="btn-confirm-dark">NEXT →</button>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!--                 ARRANGE SCREEN                  -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div id="screen-arrange" class="screen">
+
+        <!-- Header: TH logo + back -->
+        <div class="arrange-header">
+            <button id="btn-arrange-back" class="btn-ghost-dark">← Retake</button>
+            <div class="arrange-logo">
+                TOMMY
+                <span class="th-flag-icon" aria-hidden="true"></span>
+                HILFIGER
+            </div>
+            <div class="arrange-header-spacer"></div>
+        </div>
+
+        <!-- Instruction -->
+        <p class="arrange-instruction">Drag the photo to<br>your preferred spot</p>
+
+        <!-- Body: photo tray + collage board -->
+        <div class="arrange-body">
+
+            <!-- Left: 3 source photos to drag from -->
+            <div class="photo-tray" id="photo-tray">
+                <div class="tray-item" draggable="true" data-idx="0">
+                    <img alt="Photo 1">
+                    <span class="tray-num">1</span>
+                </div>
+                <div class="tray-item" draggable="true" data-idx="1">
+                    <img alt="Photo 2">
+                    <span class="tray-num">2</span>
+                </div>
+                <div class="tray-item" draggable="true" data-idx="2">
+                    <img alt="Photo 3">
+                    <span class="tray-num">3</span>
+                </div>
+            </div>
+
+            <!-- Right: collage board with drop zones -->
+            <div class="collage-board" id="collage-board">
+                <!-- TH logo watermark inside board -->
+                <div class="board-logo">
+                    TOMMY
+                    <span class="th-flag-icon th-flag-icon--sm" aria-hidden="true"></span>
+                    HILFIGER
+                </div>
+                <!-- Absolutely positioned drop zones matching wireframe -->
+                <div class="board-slots">
+                    <div class="drop-slot" data-slot="0">
+                        <span class="slot-hint">DRAG YOUR<br>PHOTO HERE</span>
+                    </div>
+                    <div class="drop-slot" data-slot="1">
+                        <span class="slot-hint">DRAG YOUR<br>PHOTO HERE</span>
+                    </div>
+                    <div class="drop-slot" data-slot="2">
+                        <span class="slot-hint">DRAG YOUR<br>PHOTO HERE</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="arrange-footer">
+            <button id="btn-print-final"    class="side-btn hidden" title="Print A3">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            </button>
+            <button id="btn-download-final" class="side-btn hidden" title="QR download">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="5" y="5" width="3" height="3" fill="currentColor" stroke="none"/><rect x="16" y="5" width="3" height="3" fill="currentColor" stroke="none"/><rect x="5" y="16" width="3" height="3" fill="currentColor" stroke="none"/><rect x="16" y="16" width="3" height="3" fill="currentColor" stroke="none"/><rect x="19" y="19" width="2" height="2" fill="currentColor" stroke="none"/></svg>
+            </button>
+            <button id="btn-confirm" class="btn-confirm-outline">CONFIRM</button>
+        </div>
+
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!--               PRINT COPIES MODAL               -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div id="print-modal" class="qr-modal hidden">
+        <div class="qr-card print-modal-card">
+            <div class="th-flag-bar">
+                <div class="th-flag-navy"></div>
+                <div class="th-flag-white"></div>
+                <div class="th-flag-red"></div>
+            </div>
+            <div class="qr-body">
+                <p class="qr-brand">TOMMY HILFIGER</p>
+                <p class="qr-title">NUMBER OF COPIES</p>
+                <div class="copies-counter">
+                    <button id="btn-copies-dec" class="copies-btn" aria-label="Decrease">&#8722;</button>
+                    <span id="copies-value">1</span>
+                    <button id="btn-copies-inc" class="copies-btn" aria-label="Increase">&#43;</button>
+                </div>
+                <div class="print-modal-actions">
+                    <button id="btn-print-cancel" class="btn-ghost-dark">CANCEL</button>
+                    <button id="btn-print-confirm" class="btn-primary">PRINT</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!--                 QR DOWNLOAD MODAL               -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div id="qr-modal" class="qr-modal hidden">
+        <div class="qr-card">
+            <div class="th-flag-bar">
+                <div class="th-flag-navy"></div>
+                <div class="th-flag-white"></div>
+                <div class="th-flag-red"></div>
+            </div>
+            <div class="qr-body">
+                <p class="qr-brand">TOMMY HILFIGER</p>
+                <p class="qr-title">SCAN TO DOWNLOAD</p>
+                <div class="qr-canvas-wrap">
+                    <div id="qr-canvas"></div>
+                </div>
+                <p class="qr-url" id="qr-url-text"></p>
+                <button id="btn-qr-close" class="btn-primary">CLOSE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!--               GLOBAL LOADING OVERLAY           -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div id="loading-overlay" class="loading-overlay hidden">
+        <div class="spinner"></div>
+        <p id="loading-text">Loading…</p>
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!--            PRINT AREA (hidden except print)    -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div id="print-area" class="print-area"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

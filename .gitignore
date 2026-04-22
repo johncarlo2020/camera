@@ -1,0 +1,6 @@
+# Ignore uploaded photos but keep the directory
+storage/photos/*.jpg
+storage/photos/*.jpeg
+storage/photos/*.png
+storage/photos/*.gif
+storage/photos/*.webp

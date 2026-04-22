@@ -1,0 +1,1221 @@
+/* ═══════════════════════════════════════════════════════
+   Tommy Hilfiger Photo Shoot — style.css
+   ═══════════════════════════════════════════════════════ */
+
+/* ─── Reset & base ─────────────────────────────────────── */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    /* ── Tommy Hilfiger brand palette ── */
+    --th-navy:       #001E62;
+    --th-navy-dark:  #000D38;
+    --th-navy-mid:   #002D9C;
+    --th-red:        #CE1126;
+    --th-red-dark:   #a80d1e;
+    --th-white:      #ffffff;
+    --th-off-white:  #f5f4f0;
+    --th-light-gray: #ebebeb;
+    --th-mid-gray:   #c8c8c8;
+
+    /* ── Functional aliases ── */
+    --accent:        var(--th-red);
+    --primary:       var(--th-navy);
+    --bg-camera:     #000E30;
+    --text-light:    #f0f0f0;
+    --text-muted:    #a0a0a8;
+    --transition:    0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --shadow:        0 8px 32px rgba(0,0,0,0.24);
+    --shadow-card:   0 4px 20px rgba(0,0,48,0.16);
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    overflow: hidden;
+    background: #111;
+    color: #1a1a1a;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Screen system ─────────────────────────────────────── */
+.screen {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.98) translateY(12px);
+    transition: opacity var(--transition), transform var(--transition);
+    z-index: 1;
+}
+
+.screen.active {
+    opacity: 1;
+    pointer-events: all;
+    transform: scale(1) translateY(0);
+    z-index: 2;
+}
+
+.hidden {
+    display: none !important;
+}
+
+
+/* ═══════════════════════════════════════════════════════
+   TH FLAG STRIPE BAR  (shared decoration element)
+   ═══════════════════════════════════════════════════════ */
+.th-flag-bar {
+    display: flex;
+    width: 100%;
+    height: 8px;
+    flex-shrink: 0;
+    z-index: 10;
+}
+
+.th-flag-navy  { flex: 1; background: var(--th-navy); }
+.th-flag-white { flex: 1; background: var(--th-white); }
+.th-flag-red   { flex: 1; background: var(--th-red);   }
+
+
+/* ═══════════════════════════════════════════════════════
+   START SCREEN
+   ═══════════════════════════════════════════════════════ */
+#screen-start {
+    align-items: center;
+    justify-content: center;
+    background: var(--th-white);
+    overflow: hidden;
+}
+
+/* Left vertical stripe accent */
+#screen-start::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 12px;
+    background: var(--th-navy);
+}
+
+/* Right vertical stripe accent */
+#screen-start::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 12px;
+    background: var(--th-red);
+}
+
+.start-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    z-index: 1;
+    padding: 40px 24px;
+}
+
+/* ── TH flag emblem — badge shaped like the real logo ─ */
+.th-emblem {
+    display: flex;
+    flex-direction: column;
+    width: 180px;
+    height: 112px;
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--th-navy);
+    box-shadow: 0 10px 36px rgba(0,0,0,.45);
+    margin-bottom: 18px;
+}
+
+.emblem-text {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--th-navy);
+    color: var(--th-white);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: .6rem;
+    letter-spacing: 3.5px;
+}
+
+.emblem-flag {
+    display: flex;
+    flex: 2.2;
+}
+
+.emblem-white { flex: 1; background: var(--th-white); }
+.emblem-red   { flex: 1; background: var(--th-red);   }
+
+/* ── Brand wordmark ──────────────────────────────────── */
+.start-brand {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(1.55rem, 4.5vw, 2.7rem);
+    font-weight: 800;
+    color: var(--th-navy);
+    letter-spacing: 4px;
+    text-align: center;
+    line-height: 1;
+}
+
+.start-event {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(1rem, 2.8vw, 1.5rem);
+    font-weight: 700;
+    color: var(--th-red);
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+
+.start-sub {
+    font-size: .72rem;
+    color: #9a9aaa;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 4px;
+    margin-bottom: 14px;
+}
+
+.start-footer {
+    position: fixed;
+    bottom: 24px;
+    font-size: .72rem;
+    color: #bbb;
+    letter-spacing: 1px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* ─── Insecure-origin warning ───────────────────────────── */
+.insecure-warning {
+    position: fixed;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(540px, 92vw);
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: rgba(206, 17, 38, 0.07);
+    border: 1px solid rgba(206, 17, 38, 0.35);
+    border-radius: 4px;
+    padding: 16px 20px;
+    z-index: 10;
+    animation: slideUp .4s cubic-bezier(0.4,0,0.2,1);
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateX(-50%) translateY(12px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0);    }
+}
+
+.iw-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    line-height: 1;
+    padding-top: 2px;
+}
+
+.iw-body {
+    font-size: .82rem;
+    color: #333;
+    line-height: 1.55;
+}
+
+.iw-body strong {
+    display: block;
+    font-size: .9rem;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    color: var(--th-red);
+    margin-bottom: 6px;
+    letter-spacing: .5px;
+}
+
+.iw-body p { color: #555; margin-bottom: 4px; }
+
+.iw-body code {
+    background: rgba(0,0,0,.07);
+    border-radius: 3px;
+    padding: 1px 6px;
+    font-family: 'Courier New', monospace;
+    font-size: .8rem;
+    color: var(--th-navy);
+}
+
+.iw-url {
+    display: inline-block;
+    margin: 4px 0 8px;
+    font-size: .85rem !important;
+    letter-spacing: .3px;
+}
+
+.iw-fix { margin-top: 8px !important; }
+
+.iw-alt {
+    margin-top: 2px !important;
+    font-size: .74rem !important;
+    color: #999 !important;
+}
+
+/* Disable start button when insecure */
+#btn-start.disabled {
+    opacity: .3;
+    cursor: not-allowed;
+    box-shadow: none;
+    animation: none;
+    pointer-events: none;
+}
+
+#btn-start.shake {
+    animation: shake .5s ease;
+    pointer-events: none;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0);    }
+    18%       { transform: translateX(-8px); }
+    36%       { transform: translateX(8px);  }
+    54%       { transform: translateX(-6px); }
+    72%       { transform: translateX(6px);  }
+    90%       { transform: translateX(-3px); }
+}
+
+
+/* ═══════════════════════════════════════════════════════
+   SHARED BUTTONS
+   ═══════════════════════════════════════════════════════ */
+.btn-primary {
+    padding: 15px 56px;
+    background: var(--th-navy);
+    color: var(--th-white);
+    border: none;
+    border-radius: 0;
+    font-family: 'Montserrat', sans-serif;
+    font-size: .88rem;
+    font-weight: 800;
+    letter-spacing: 4px;
+    cursor: pointer;
+    transition: background .2s, transform .15s, box-shadow .2s;
+}
+
+.btn-primary:hover {
+    background: var(--th-navy-mid);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(0,30,98,.35);
+}
+
+.btn-primary:active { transform: translateY(0); }
+
+.btn-glow {
+    box-shadow: 0 0 0 3px rgba(0,48,135,.15), 0 4px 16px rgba(0,0,0,.18);
+    animation: glowPulse 3s ease-in-out infinite alternate;
+}
+
+@keyframes glowPulse {
+    from { box-shadow: 0 0 0 3px rgba(0,30,98,.12),  0 4px 20px rgba(0,30,98,.22); }
+    to   { box-shadow: 0 0 0 5px rgba(0,30,98,.28), 0 8px 32px rgba(0,30,98,.42); }
+}
+
+.btn-ghost {
+    padding: 8px 16px;
+    background: rgba(255,255,255,.10);
+    color: var(--text-light);
+    border: 1px solid rgba(255,255,255,.20);
+    border-radius: 2px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    transition: background .2s;
+}
+
+.btn-ghost:hover { background: rgba(255,255,255,.18); }
+
+
+/* ═══════════════════════════════════════════════════════
+   CAMERA SCREEN
+   ═══════════════════════════════════════════════════════ */
+#screen-camera {
+    background: var(--bg-camera);
+    overflow: hidden;
+}
+
+.cam-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    background: var(--th-navy);
+    z-index: 10;
+    flex-shrink: 0;
+    gap: 12px;
+}
+
+/* TH wordmark in the camera header */
+.cam-wordmark {
+    flex: 1;
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    font-size: .72rem;
+    font-weight: 800;
+    color: var(--th-white);
+    letter-spacing: 4px;
+    pointer-events: none;
+}
+
+.cam-header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.shot-indicators {
+    display: flex;
+    gap: 8px;
+}
+
+.dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.15);
+    border: 2px solid rgba(255,255,255,.30);
+    transition: background .3s, border-color .3s, box-shadow .3s;
+}
+
+.dot.filled {
+    background: var(--th-red);
+    border-color: var(--th-red);
+    box-shadow: 0 0 8px rgba(206,17,38,.6);
+}
+
+.shot-label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: .78rem;
+    font-weight: 700;
+    color: rgba(255,255,255,.55);
+    letter-spacing: 1px;
+    min-width: 36px;
+    text-align: right;
+}
+
+/* ── Viewport ─────────────────────────────────────────── */
+.cam-viewport {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+#camera-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scaleX(-1);
+    display: block;
+}
+
+/* ── Countdown ────────────────────────────────────────── */
+.countdown-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,20,65,.45);
+    backdrop-filter: blur(3px);
+    z-index: 20;
+}
+
+.countdown-num {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(130px, 26vw, 200px);
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 0 40px rgba(255,255,255,.4), 0 0 80px rgba(206,17,38,.5);
+    line-height: 1;
+    user-select: none;
+    letter-spacing: -8px;
+}
+
+.countdown-num.pop {
+    animation: popNum 0.92s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes popNum {
+    0%   { transform: scale(.25);  opacity: 0; }
+    30%  { transform: scale(1.18); opacity: 1; }
+    60%  { transform: scale(.98);             }
+    80%  { transform: scale(1);    opacity: 1; }
+    100% { transform: scale(.7);   opacity: 0; }
+}
+
+/* ── Flash ────────────────────────────────────────────── */
+.flash-overlay {
+    position: absolute;
+    inset: 0;
+    background: #fff;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 30;
+}
+
+.flash-overlay.flash-active {
+    animation: flashBurst .55s ease-out forwards;
+}
+
+@keyframes flashBurst {
+    0%   { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+/* ── Capture strip ────────────────────────────────────── */
+.capture-strip {
+    position: absolute;
+    bottom: 14px;
+    right: 14px;
+    display: flex;
+    gap: 7px;
+    z-index: 15;
+}
+
+.strip-cell {
+    width: 80px;
+    height: 58px;
+    border-radius: 0;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.16);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color .3s, box-shadow .3s;
+}
+
+.strip-cell.filled {
+    border-color: var(--th-red);
+    box-shadow: 0 0 10px rgba(206,17,38,.45);
+}
+
+.strip-cell img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.cell-label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    color: rgba(255,255,255,.15);
+    letter-spacing: 1px;
+}
+
+/* ── Camera footer ────────────────────────────────────── */
+.cam-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    background: var(--th-navy);
+    flex-shrink: 0;
+}
+
+.status-text {
+    font-family: 'Montserrat', sans-serif;
+    font-size: .72rem;
+    font-weight: 600;
+    color: rgba(255,255,255,.45);
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+}
+
+
+/* ═══════════════════════════════════════════════════════
+   REVIEW SCREEN
+   ═══════════════════════════════════════════════════════ */
+#screen-review {
+    background: var(--th-off-white);
+    align-items: stretch;
+    justify-content: flex-start;
+}
+
+.review-layout {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    padding: 32px 24px;
+}
+
+.review-brand {
+    font-family: 'Montserrat', sans-serif;
+    font-size: .68rem;
+    font-weight: 800;
+    color: var(--th-navy);
+    letter-spacing: 5px;
+    text-align: center;
+    margin-bottom: -8px;
+}
+
+.review-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(1.5rem, 4vw, 2.4rem);
+    font-weight: 800;
+    color: var(--th-navy);
+    letter-spacing: 3px;
+    text-align: center;
+}
+
+.review-strip {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.review-photo-wrap {
+    position: relative;
+    width: clamp(100px, 20vw, 170px);
+    aspect-ratio: 4/3;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+    border: 2px solid var(--th-white);
+}
+
+.review-photo-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.review-photo-num {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 5px 0;
+    background: var(--th-navy);
+    color: var(--th-white);
+    font-family: 'Montserrat', sans-serif;
+    font-size: .68rem;
+    font-weight: 800;
+    letter-spacing: 3px;
+    text-align: center;
+}
+
+/* Dark confirm-style buttons */
+.btn-confirm-dark {
+    padding: 14px 52px;
+    background: var(--th-navy);
+    color: var(--th-white);
+    border: none;
+    border-radius: 0;
+    font-family: 'Montserrat', sans-serif;
+    font-size: .8rem;
+    font-weight: 800;
+    letter-spacing: 4px;
+    cursor: pointer;
+    transition: background .18s, box-shadow .18s, transform .14s;
+}
+
+.btn-confirm-dark:hover {
+    background: var(--th-navy-mid);
+    box-shadow: 0 6px 20px rgba(0,48,135,.25);
+    transform: translateY(-1px);
+}
+
+/* Ghost button for light screens */
+.btn-ghost-dark {
+    padding: 8px 14px;
+    background: transparent;
+    color: var(--th-navy);
+    border: 1px solid rgba(0,48,135,.25);
+    border-radius: 2px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background .15s, border-color .15s;
+}
+
+.btn-ghost-dark:hover {
+    background: rgba(0,48,135,.06);
+    border-color: var(--th-navy);
+}
+
+
+/* ═══════════════════════════════════════════════════════
+   ARRANGE SCREEN
+   ═══════════════════════════════════════════════════════ */
+#screen-arrange {
+    background: var(--th-off-white);
+    display: flex;
+    flex-direction: column;
+}
+
+/* ── Header ─────────────────────────────────────────── */
+.arrange-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--th-white);
+    border-bottom: 1px solid var(--th-light-gray);
+    flex-shrink: 0;
+    gap: 8px;
+}
+
+.arrange-header-spacer { width: 76px; flex-shrink: 0; }
+
+.arrange-logo {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: .78rem;
+    font-weight: 800;
+    color: var(--th-navy);
+    letter-spacing: 3px;
+}
+
+/* Inline TH flag icon — used in header logo & board watermark */
+.th-flag-icon {
+    display: inline-flex;
+    width: 26px;
+    height: 17px;
+    flex-shrink: 0;
+    background: linear-gradient(to right, var(--th-white) 50%, var(--th-red) 50%);
+    border: 2px solid var(--th-navy);
+    border-radius: 1px;
+    vertical-align: middle;
+}
+
+.th-flag-icon--sm {
+    width: 17px;
+    height: 11px;
+    border-width: 1.5px;
+}
+
+/* ── Instruction ─────────────────────────────────────── */
+.arrange-instruction {
+    flex-shrink: 0;
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(.95rem, 2.4vw, 1.2rem);
+    font-weight: 400;
+    color: #333;
+    line-height: 1.55;
+    padding: 18px 20px 6px;
+}
+
+/* ── Body ────────────────────────────────────────────── */
+.arrange-body {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    overflow: hidden;
+    padding: 12px 14px 10px;
+    min-height: 0;
+}
+
+/* ── Photo Tray (left source strip) ─────────────────── */
+.photo-tray {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex-shrink: 0;
+    align-self: center;   /* vertically align with board */
+    height: min(calc(100svh - 200px), 560px); /* match board height */
+}
+
+.tray-item {
+    position: relative;
+    flex: 1;              /* share board height equally across 3 items */
+    width: clamp(52px, 10vw, 78px);
+    background: #b0b0b0;
+    overflow: hidden;
+    cursor: grab;
+    box-shadow: 0 2px 10px rgba(0,0,0,.22);
+    transition: opacity .2s, transform .15s, box-shadow .15s;
+    user-select: none;
+    -webkit-user-drag: element;
+}
+
+.tray-item:active { cursor: grabbing; }
+
+.tray-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+}
+
+.tray-num {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 4px 0;
+    background: rgba(0,0,0,.48);
+    color: #fff;
+    font-family: 'Montserrat', sans-serif;
+    font-size: .62rem;
+    font-weight: 800;
+    text-align: center;
+    letter-spacing: 1px;
+    pointer-events: none;
+}
+
+.tray-item.used {
+    opacity: .3;
+    box-shadow: none;
+}
+
+.tray-item.dragging {
+    opacity: .5;
+    transform: scale(.95);
+}
+
+/* ── Collage Board (right canvas) ───────────────────── */
+.collage-board {
+    flex-shrink: 0;
+    /* Height-constrained, width derived from A3 aspect ratio */
+    height: min(calc(100svh - 200px), 560px);
+    aspect-ratio: 297 / 420;
+    display: flex;
+    flex-direction: column;
+    background: var(--th-white);
+    box-shadow: 0 6px 28px rgba(0,0,0,.16);
+    overflow: hidden;
+}
+
+/* TH watermark logo inside the board */
+.board-logo {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 8px 12px 6px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: .58rem;
+    font-weight: 800;
+    color: var(--th-navy);
+    letter-spacing: 2.5px;
+    border-bottom: 1px solid var(--th-light-gray);
+}
+
+/* Slot container — fills board below logo, slots positioned inside */
+.board-slots {
+    flex: 1;
+    min-height: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+/* ── Drop zones ──────────────────────────────────────── */
+.drop-slot {
+    position: absolute;
+    overflow: hidden;
+    background: #c8c8c8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color .18s, background .18s;
+}
+
+/* Slot 0 — LEFT column, tall portrait, vertically centered */
+.drop-slot[data-slot="0"] {
+    left:   7%;
+    top:    20%;
+    width:  40%;
+    height: 60%;
+    border: none;
+}
+
+/* Slot 1 — RIGHT column, upper portrait */
+.drop-slot[data-slot="1"] {
+    left:   53%;
+    top:    5%;
+    width:  40%;
+    height: 43%;
+    border: none;
+}
+
+/* Slot 2 — RIGHT column, lower portrait (empty/dashed) */
+.drop-slot[data-slot="2"] {
+    left:   53%;
+    top:    52%;
+    width:  40%;
+    height: 43%;
+    background: transparent;
+    border: 2px dashed var(--th-mid-gray);
+}
+
+.drop-slot.drag-over {
+    border: 2px solid var(--th-navy);
+    background: rgba(0, 30, 98, .07);
+}
+
+.drop-slot.filled {
+    border: none;
+    background: transparent;
+}
+
+.drop-slot.filled img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.slot-hint {
+    font-family: 'Montserrat', sans-serif;
+    font-size: .52rem;
+    font-weight: 700;
+    color: var(--th-mid-gray);
+    letter-spacing: 1.5px;
+    text-align: center;
+    line-height: 1.7;
+    pointer-events: none;
+}
+
+/* ── Footer ──────────────────────────────────────────── */
+.arrange-footer {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 16px;
+    background: var(--th-navy);
+    gap: 12px;
+}
+
+.btn-confirm-outline {
+    padding: 12px 52px;
+    background: transparent;
+    color: var(--th-white);
+    border: 1.5px solid rgba(255,255,255,.50);
+    border-radius: 0;
+    font-family: 'Montserrat', sans-serif;
+    font-size: .8rem;
+    font-weight: 800;
+    letter-spacing: 4px;
+    cursor: pointer;
+    transition: background .15s, border-color .15s, box-shadow .15s;
+}
+
+.btn-confirm-outline:hover {
+    background: rgba(255,255,255,.12);
+    border-color: rgba(255,255,255,.80);
+}
+
+.btn-confirm-outline.done-mode {
+    background: var(--th-red);
+    border-color: var(--th-red);
+    color: var(--th-white);
+}
+
+.btn-confirm-outline.done-mode:hover {
+    background: var(--th-red-dark);
+    border-color: var(--th-red-dark);
+}
+
+.side-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 2px;
+    background: var(--th-white);
+    border: 1px solid #ddd;
+    color: var(--th-navy);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,.10);
+    transition: background .14s, box-shadow .14s, transform .12s;
+}
+
+.side-btn:hover {
+    background: var(--th-navy);
+    color: var(--th-white);
+    border-color: var(--th-navy);
+    box-shadow: 0 4px 14px rgba(0,30,98,.25);
+    transform: translateY(-1px);
+}
+
+
+/* ═══════════════════════════════════════════════════════
+   QR DOWNLOAD MODAL
+   ═══════════════════════════════════════════════════════ */
+.qr-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 14, 48, .72);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9998;
+    backdrop-filter: blur(6px);
+    animation: fadeIn .25s ease;
+}
+
+.qr-modal.hidden { display: none; }
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.qr-card {
+    background: var(--th-white);
+    width: min(320px, 90vw);
+    box-shadow: 0 24px 64px rgba(0,0,0,.40);
+    overflow: hidden;
+    animation: slideUp .28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+}
+
+.qr-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 28px 24px 32px;
+    gap: 10px;
+}
+
+.qr-brand {
+    font-family: 'Montserrat', sans-serif;
+    font-size: .58rem;
+    font-weight: 800;
+    color: var(--th-navy);
+    letter-spacing: 4.5px;
+    margin-bottom: -4px;
+}
+
+.qr-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: .72rem;
+    font-weight: 700;
+    color: var(--th-mid-gray);
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+}
+
+.qr-canvas-wrap {
+    padding: 12px;
+    background: #fff;
+    border: 1px solid var(--th-light-gray);
+    line-height: 0;
+}
+
+.qr-canvas-wrap canvas {
+    display: block;
+}
+
+.qr-url {
+    font-family: 'Montserrat', sans-serif;
+    font-size: .6rem;
+    color: var(--th-mid-gray);
+    letter-spacing: .5px;
+    word-break: break-all;
+    text-align: center;
+    max-width: 240px;
+    margin-top: 4px;
+}
+
+#btn-qr-close {
+    margin-top: 12px;
+    padding: 12px 48px;
+    font-size: .75rem;
+    letter-spacing: 3px;
+}
+
+/* ── Print copies modal specifics ───────────────────── */
+.print-modal-card .qr-body {
+    gap: 14px;
+}
+
+.copies-counter {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    border: 1.5px solid var(--th-navy);
+    overflow: hidden;
+}
+
+.copies-btn {
+    width: 52px;
+    height: 52px;
+    background: var(--th-navy);
+    color: var(--th-white);
+    border: none;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    transition: background .15s;
+    flex-shrink: 0;
+}
+
+.copies-btn:hover  { background: var(--th-navy-mid); }
+.copies-btn:active { background: var(--th-navy-dark); }
+
+#copies-value {
+    min-width: 72px;
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--th-navy);
+    letter-spacing: 1px;
+    padding: 0 4px;
+    user-select: none;
+}
+
+.print-modal-actions {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    margin-top: 4px;
+}
+
+.print-modal-actions .btn-ghost-dark,
+.print-modal-actions .btn-primary {
+    flex: 1;
+    padding: 12px;
+    font-size: .75rem;
+    letter-spacing: 3px;
+    text-align: center;
+}
+
+
+/* ═══════════════════════════════════════════════════════
+   LOADING OVERLAY
+   ═══════════════════════════════════════════════════════ */
+.loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,20,65,.82);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    z-index: 9999;
+    backdrop-filter: blur(5px);
+}
+
+.spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid rgba(255,255,255,.12);
+    border-top-color: var(--th-red);
+    border-radius: 50%;
+    animation: spin .75s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-overlay p {
+    font-family: 'Montserrat', sans-serif;
+    color: rgba(255,255,255,.7);
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+
+/* ═══════════════════════════════════════════════════════
+   PRINT AREA  (hidden on screen, shown only on print)
+   ═══════════════════════════════════════════════════════ */
+.print-area {
+    display: none;
+}
+
+@media print {
+    body > *:not(.print-area) {
+        visibility: hidden !important;
+        display: none !important;
+    }
+
+    body {
+        overflow: visible;
+        background: #fff;
+    }
+
+    @page {
+        size: A3 portrait;
+        margin: 0;
+    }
+
+    .print-area {
+        display: block !important;
+        visibility: visible !important;
+        position: static !important;
+        width: 100% !important;
+        height: auto !important;
+    }
+
+    .print-page {
+        display: block !important;
+        visibility: visible !important;
+        width: 297mm;
+        height: 420mm;
+        page-break-after: always;
+        break-after: page;
+        overflow: hidden;
+    }
+
+    .print-page:last-child {
+        page-break-after: avoid;
+        break-after: avoid;
+    }
+
+    .print-page img {
+        display: block !important;
+        width: 297mm !important;
+        height: 420mm !important;
+        visibility: visible !important;
+    }
+}
+
+
