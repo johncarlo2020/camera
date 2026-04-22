@@ -466,8 +466,15 @@ async function exportCollage(quality = 0.95) {
     canvas.height = A3_H;
     const ctx = canvas.getContext('2d');
 
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, A3_W, A3_H);
+    // Draw the collage template as background
+    const templateImg = new Image();
+    templateImg.src = 'asset/image.png';
+    await new Promise(resolve => {
+        if (templateImg.complete && templateImg.naturalWidth) { resolve(); return; }
+        templateImg.onload  = resolve;
+        templateImg.onerror = resolve;
+    });
+    ctx.drawImage(templateImg, 0, 0, A3_W, A3_H);
 
     const scaleX = A3_W / boardRect.width;
     const scaleY = A3_H / boardRect.height;

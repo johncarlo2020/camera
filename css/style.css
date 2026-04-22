@@ -127,39 +127,13 @@ html, body {
     padding: 40px 24px;
 }
 
-/* ── TH flag emblem — badge shaped like the real logo ─ */
-.th-emblem {
-    display: flex;
-    flex-direction: column;
-    width: 180px;
-    height: 112px;
-    border-radius: 14px;
-    overflow: hidden;
-    background: var(--th-navy);
-    box-shadow: 0 10px 36px rgba(0,0,0,.45);
+/* ── Start screen logo ────────────────────────── */
+.start-logo {
+    width: clamp(200px, 55vw, 340px);
+    height: auto;
     margin-bottom: 18px;
+    display: block;
 }
-
-.emblem-text {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--th-navy);
-    color: var(--th-white);
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 800;
-    font-size: .6rem;
-    letter-spacing: 3.5px;
-}
-
-.emblem-flag {
-    display: flex;
-    flex: 2.2;
-}
-
-.emblem-white { flex: 1; background: var(--th-white); }
-.emblem-red   { flex: 1; background: var(--th-red);   }
 
 /* ── Brand wordmark ──────────────────────────────────── */
 .start-brand {
@@ -333,9 +307,9 @@ html, body {
 
 .btn-ghost {
     padding: 8px 16px;
-    background: rgba(255,255,255,.10);
-    color: var(--text-light);
-    border: 1px solid rgba(255,255,255,.20);
+    background: transparent;
+    color: var(--th-navy);
+    border: 1px solid rgba(0,30,98,.30);
     border-radius: 2px;
     font-family: 'Montserrat', sans-serif;
     font-size: .75rem;
@@ -345,7 +319,7 @@ html, body {
     transition: background .2s;
 }
 
-.btn-ghost:hover { background: rgba(255,255,255,.18); }
+.btn-ghost:hover { background: rgba(0,30,98,.07); }
 
 
 /* ═══════════════════════════════════════════════════════
@@ -361,22 +335,26 @@ html, body {
     align-items: center;
     justify-content: space-between;
     padding: 12px 20px;
-    background: var(--th-navy);
+    background: var(--th-white);
+    border-bottom: 1px solid var(--th-light-gray);
     z-index: 10;
     flex-shrink: 0;
     gap: 12px;
 }
 
-/* TH wordmark in the camera header */
+/* TH logo in the camera header */
 .cam-wordmark {
     flex: 1;
-    text-align: center;
-    font-family: 'Montserrat', sans-serif;
-    font-size: .72rem;
-    font-weight: 800;
-    color: var(--th-white);
-    letter-spacing: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     pointer-events: none;
+}
+
+.cam-logo {
+    height: 28px;
+    width: auto;
+    display: block;
 }
 
 .cam-header-right {
@@ -394,8 +372,8 @@ html, body {
     width: 11px;
     height: 11px;
     border-radius: 50%;
-    background: rgba(255,255,255,.15);
-    border: 2px solid rgba(255,255,255,.30);
+    background: transparent;
+    border: 2px solid rgba(0,30,98,.25);
     transition: background .3s, border-color .3s, box-shadow .3s;
 }
 
@@ -409,7 +387,7 @@ html, body {
     font-family: 'Montserrat', sans-serif;
     font-size: .78rem;
     font-weight: 700;
-    color: rgba(255,255,255,.55);
+    color: rgba(0,30,98,.55);
     letter-spacing: 1px;
     min-width: 36px;
     text-align: right;
@@ -569,14 +547,11 @@ html, body {
     padding: 32px 24px;
 }
 
-.review-brand {
-    font-family: 'Montserrat', sans-serif;
-    font-size: .68rem;
-    font-weight: 800;
-    color: var(--th-navy);
-    letter-spacing: 5px;
-    text-align: center;
-    margin-bottom: -8px;
+.review-logo {
+    width: clamp(140px, 40vw, 220px);
+    height: auto;
+    display: block;
+    margin: 0 auto -4px;
 }
 
 .review-title {
@@ -695,12 +670,13 @@ html, body {
 .arrange-logo {
     display: flex;
     align-items: center;
-    gap: 7px;
-    font-family: 'Montserrat', sans-serif;
-    font-size: .78rem;
-    font-weight: 800;
-    color: var(--th-navy);
-    letter-spacing: 3px;
+    justify-content: center;
+}
+
+.arrange-logo img {
+    height: 22px;
+    width: auto;
+    display: block;
 }
 
 /* Inline TH flag icon — used in header logo & board watermark */
@@ -807,20 +783,19 @@ html, body {
 /* ── Collage Board (right canvas) ───────────────────── */
 .collage-board {
     flex-shrink: 0;
+    position: relative;
     /* Height-constrained, width derived from A3 aspect ratio */
     height: min(calc(100svh - 200px), 560px);
     aspect-ratio: 297 / 420;
-    display: flex;
-    flex-direction: column;
-    background: var(--th-white);
+    background: url('../asset/image.png') center / 100% 100% no-repeat;
     box-shadow: 0 6px 28px rgba(0,0,0,.16);
     overflow: hidden;
 }
 
-/* TH watermark logo inside the board */
+/* TH watermark logo inside the board — hidden, baked into background image */
 .board-logo {
+    display: none;
     flex-shrink: 0;
-    display: flex;
     align-items: center;
     justify-content: center;
     gap: 5px;
@@ -833,11 +808,10 @@ html, body {
     border-bottom: 1px solid var(--th-light-gray);
 }
 
-/* Slot container — fills board below logo, slots positioned inside */
+/* Slot container — covers full board as absolute overlay */
 .board-slots {
-    flex: 1;
-    min-height: 0;
-    position: relative;
+    position: absolute;
+    inset: 0;
     overflow: hidden;
 }
 
@@ -845,39 +819,39 @@ html, body {
 .drop-slot {
     position: absolute;
     overflow: hidden;
-    background: #c8c8c8;
+    background: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: border-color .18s, background .18s;
 }
 
-/* Slot 0 — LEFT column, tall portrait, vertically centered */
+/* Slot 0 — LEFT column, portrait (matches template left gray box) */
 .drop-slot[data-slot="0"] {
-    left:   7%;
-    top:    20%;
-    width:  40%;
-    height: 60%;
+    left: 3%;
+    top: 30%;
+    width: 30%;
+    height: 33%;
     border: none;
 }
 
-/* Slot 1 — RIGHT column, upper portrait */
+/* Slot 1 — RIGHT column, upper portrait (matches template upper-right gray box) */
 .drop-slot[data-slot="1"] {
-    left:   53%;
-    top:    5%;
-    width:  40%;
-    height: 43%;
+    left: 50%;
+    top: 12%;
+    width: 34%;
+    height: 34%;
     border: none;
 }
 
-/* Slot 2 — RIGHT column, lower portrait (empty/dashed) */
+/* Slot 2 — CENTER lower portrait (matches template lower-center gray box) */
 .drop-slot[data-slot="2"] {
-    left:   53%;
-    top:    52%;
-    width:  40%;
-    height: 43%;
+    left: 36%;
+    top: 55%;
+    width: 31%;
+    height: 32%;
     background: transparent;
-    border: 2px dashed var(--th-mid-gray);
+    border: none;
 }
 
 .drop-slot.drag-over {
@@ -900,6 +874,7 @@ html, body {
 }
 
 .slot-hint {
+    display: none; /* hint text is part of the background image */
     font-family: 'Montserrat', sans-serif;
     font-size: .52rem;
     font-weight: 700;
@@ -1018,13 +993,11 @@ html, body {
     gap: 10px;
 }
 
-.qr-brand {
-    font-family: 'Montserrat', sans-serif;
-    font-size: .58rem;
-    font-weight: 800;
-    color: var(--th-navy);
-    letter-spacing: 4.5px;
-    margin-bottom: -4px;
+.modal-logo {
+    width: clamp(120px, 35vw, 200px);
+    height: auto;
+    display: block;
+    margin: 4px auto 8px;
 }
 
 .qr-title {
