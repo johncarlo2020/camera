@@ -114,6 +114,17 @@ html, body {
 /* ── Empty middle area ─────────────────────────────── */
 .start-middle {
     flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 24px;
+    min-height: 0;
+}
+
+.start-combine-img {
+    width: 140%;
+    height: auto;
+    display: block;
 }
 
 /* ── CTA area ──────────────────────────────────────── */
@@ -346,13 +357,17 @@ html, body {
     overflow: hidden;
 }
 
+#screen-countdown .start-footer-bar {
+    margin-top: auto;
+}
+
 /* ── Countdown area ───────────────────────────────────── */
 .cd-area {
-    flex: 1;
     position: relative;
+    flex: 1;
     min-height: 0;
     overflow: hidden;
-    margin: 0 16px;
+    margin: 16px 16px 0;
     border-radius: 2px;
 }
 
