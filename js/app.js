@@ -29,29 +29,32 @@ let slotAssignments = [null, null, null];      // which photoIdx lives in each d
 const $ = id => document.getElementById(id);
 
 // Screens
-const screenStart  = $('screen-start');
-const screenCamera = $('screen-camera');
-const screenReview = $('screen-review');
-const screenArrange = $('screen-arrange');
+const screenStart     = $('screen-start');
+const screenIntro     = $('screen-intro');
+const screenCountdown = $('screen-countdown');
+const screenReview    = $('screen-review');
+const screenArrange   = $('screen-arrange');
+const screenConfirm   = $('screen-confirm');
+const screenFinal     = $('screen-final');
 
-// Camera screen
-const videoEl          = $('camera-video');
-const captureCanvas    = $('capture-canvas');
-const countdownOverlay = $('countdown-overlay');
-const countdownNum     = $('countdown-number');
-const flashOverlay     = $('flash-overlay');
-const cameraStatus     = $('camera-status');
-const shotCurrent      = $('shot-current');
-const dots             = [1, 2, 3].map(n => $(`ind-${n}`));
-const stripCells       = [1, 2, 3].map(n => $(`strip-${n}`));
+// Countdown screen elements
+const videoEl       = $('camera-video');
+const captureCanvas = $('capture-canvas');
+const flashOverlay  = $('flash-overlay');
+const cdArea        = $('cd-area');
+const cdShotLabel   = $('cd-shot-label');
+const cdNumber      = $('cd-number');
+const cdReveal      = $('cd-reveal');
+const cdRevealTitle = $('cd-reveal-title');
+const cdPhoto       = $('cd-photo');
+const btnCdNext     = $('btn-cd-next');
 
 // Loading
 const loadingOverlay = $('loading-overlay');
 const loadingText    = $('loading-text');
 
 // Buttons
-const btnStart        = $('btn-start');
-const btnRetakeCamera = $('btn-retake-camera');
+const btnStart = $('btn-start');
 
 
 /* ─────────────────────────────────────────────────────────
@@ -71,7 +74,8 @@ function hideLoading() {
 }
 
 function showScreen(name) {
-    [screenStart, screenCamera, screenReview, screenArrange].forEach(el => el.classList.remove('active'));
+    [screenStart, screenIntro, screenCountdown, screenReview, screenArrange, screenConfirm, screenFinal]
+        .forEach(el => el.classList.remove('active'));
     $(`screen-${name}`).classList.add('active');
 }
 
@@ -80,6 +84,7 @@ function showScreen(name) {
    START SCREEN
    ───────────────────────────────────────────────────────── */
 btnStart.addEventListener('click', handleStart);
+$('btn-lets-go').addEventListener('click', () => startCamera());
 
 function handleStart() {
     // Must be a secure context (HTTPS or localhost)
@@ -96,7 +101,7 @@ function handleStart() {
         return;
     }
 
-    startCamera();
+    showScreen('intro');
 }
 
 
@@ -109,13 +114,6 @@ async function startCamera() {
     // Reset state
     capturedPhotos = [];
     captureActive  = false;
-    shotCurrent.textContent = '0';
-
-    dots.forEach(d => d.classList.remove('filled'));
-    stripCells.forEach((cell, i) => {
-        cell.innerHTML = `<span class="cell-label">${i + 1}</span>`;
-        cell.classList.remove('filled');
-    });
 
     // Stop any previous stream
     stopCamera();
@@ -123,8 +121,9 @@ async function startCamera() {
     try {
         mediaStream = await navigator.mediaDevices.getUserMedia({
             video: {
-                width:      { ideal: 1280 },
-                height:     { ideal: 720  },
+                width:       { ideal: 1080 },
+                height:      { ideal: 1920 },
+                aspectRatio: { ideal: 9/16 },
                 facingMode: 'user',
             },
             audio: false,
@@ -141,10 +140,9 @@ async function startCamera() {
         await videoEl.play();
 
         hideLoading();
-        showScreen('camera');
-        updateStatus('READY');
+        showScreen('countdown');
 
-        await sleep(1400);
+        await sleep(800);
         runCaptureSequence();
 
     } catch (err) {
@@ -165,90 +163,102 @@ function stopCamera() {
     videoEl.srcObject = null;
 }
 
-btnRetakeCamera.addEventListener('click', () => {
-    captureActive = false;
-    stopCamera();
-    showScreen('start');
-});
-
 
 /* ─────────────────────────────────────────────────────────
    CAMERA — CAPTURE SEQUENCE
    ───────────────────────────────────────────────────────── */
+const SHOT_LABELS = ['First', 'Second', 'Third'];
+
+function updateCdDots(activeIdx) {
+    [0, 1, 2].forEach(i => {
+        const dot = $(`cd-dot-${i}`);
+        if (dot) dot.classList.toggle('active', i === activeIdx);
+    });
+}
+
 async function runCaptureSequence() {
     captureActive = true;
 
     for (let i = 0; i < TOTAL_SHOTS; i++) {
         if (!captureActive) return;
 
-        updateStatus(`SHOT ${i + 1} OF ${TOTAL_SHOTS} — SMILE`);
-        await sleep(300);
+        // Activate current dot
+        updateCdDots(i);
+
+        // Show countdown UI for this shot
+        cdReveal.classList.add('hidden');
+        cdArea.classList.remove('hidden');
+        cdShotLabel.textContent = `${SHOT_LABELS[i]} Shot!`;
+        cdNumber.textContent = '';
+
+        await sleep(700);
         if (!captureActive) return;
 
-        // Countdown 3 → 2 → 1
+        // Countdown 3 → 1
         await runCountdown(COUNTDOWN_SEC);
         if (!captureActive) return;
 
-        // Snap the frame
+        // Snap
         const dataURL = captureFrame();
         capturedPhotos.push(dataURL);
-
-        // Visual feedback
         triggerFlash();
-        shotCurrent.textContent = i + 1;
-        updateStripCell(i, dataURL);
-        dots[i].classList.add('filled');
 
-        if (i < TOTAL_SHOTS - 1) {
-            updateStatus('PERFECT — NEXT SHOT');
-            await sleep(1100);
-        }
+        // Show photo reveal
+        cdArea.classList.add('hidden');
+        cdRevealTitle.textContent = `THE ${SHOT_LABELS[i].toUpperCase()} SHOT!`;
+        cdPhoto.src = dataURL;
+        cdReveal.classList.remove('hidden');
+
+        // Wait for NEXT tap
+        await waitForNext();
     }
 
-    if (captureActive) {
-        updateStatus('ALL SHOTS CAPTURED');
-        captureActive = false;
-        await sleep(700);
-        stopCamera();
-        initReviewScreen();
-    }
+    captureActive = false;
+    stopCamera();
+    initReviewScreen();
+}
+
+function waitForNext() {
+    return new Promise(resolve => {
+        btnCdNext.addEventListener('click', resolve, { once: true });
+    });
 }
 
 async function runCountdown(from) {
-    countdownOverlay.classList.remove('hidden');
-
     for (let n = from; n >= 1; n--) {
-        if (!captureActive) {
-            countdownOverlay.classList.add('hidden');
-            return;
-        }
+        if (!captureActive) return;
 
-        countdownNum.textContent = n;
-
-        // Re-trigger CSS animation by forcing reflow
-        countdownNum.classList.remove('pop');
-        void countdownNum.offsetWidth;
-        countdownNum.classList.add('pop');
+        cdNumber.textContent = n;
+        cdNumber.classList.remove('pop');
+        void cdNumber.offsetWidth; // reflow to retrigger animation
+        cdNumber.classList.add('pop');
 
         await sleep(1000);
     }
-
-    countdownOverlay.classList.add('hidden');
 }
 
 function captureFrame() {
     const ctx = captureCanvas.getContext('2d');
-    const vw  = videoEl.videoWidth  || 1280;
-    const vh  = videoEl.videoHeight || 720;
+    const vw  = videoEl.videoWidth  || 1080;
+    const vh  = videoEl.videoHeight || 1920;
 
-    captureCanvas.width  = vw;
-    captureCanvas.height = vh;
+    // Match exactly what object-fit:cover shows in the portrait container
+    const containerW = videoEl.clientWidth  || vw;
+    const containerH = videoEl.clientHeight || vh;
+    const scale  = Math.max(containerW / vw, containerH / vh);
+    const cropW  = containerW / scale;
+    const cropH  = containerH / scale;
+    const sx     = (vw - cropW) / 2;
+    const sy     = (vh - cropH) / 2;
 
-    // Mirror horizontally so the saved image matches the mirrored preview
+    captureCanvas.width  = Math.round(cropW);
+    captureCanvas.height = Math.round(cropH);
+
+    // Mirror horizontally to match the mirrored preview
     ctx.save();
-    ctx.translate(vw, 0);
+    ctx.translate(captureCanvas.width, 0);
     ctx.scale(-1, 1);
-    ctx.drawImage(videoEl, 0, 0, vw, vh);
+    ctx.drawImage(videoEl, sx, sy, cropW, cropH, 0, 0, captureCanvas.width, captureCanvas.height);
     ctx.restore();
 
     return captureCanvas.toDataURL('image/jpeg', 0.92);
@@ -261,18 +271,7 @@ function triggerFlash() {
     setTimeout(() => flashOverlay.classList.remove('flash-active'), 600);
 }
 
-function updateStripCell(idx, dataURL) {
-    const cell = stripCells[idx];
-    const img  = document.createElement('img');
-    img.src    = dataURL;
-    cell.innerHTML = '';
-    cell.appendChild(img);
-    cell.classList.add('filled');
-}
 
-function updateStatus(msg) {
-    cameraStatus.textContent = msg;
-}
 
 
 /* ─────────────────────────────────────────────────────────
@@ -290,18 +289,18 @@ function initReviewScreen() {
         img.src = dataURL;
         img.alt = `Photo ${i + 1}`;
 
-        const num = document.createElement('span');
-        num.className = 'review-photo-num';
-        num.textContent = i + 1;
-
         wrap.appendChild(img);
-        wrap.appendChild(num);
         strip.appendChild(wrap);
     });
 
     showScreen('review');
 }
 
+$('btn-review-retake').addEventListener('click', () => {
+    captureActive = false;
+    stopCamera();
+    showScreen('intro');
+});
 $('btn-review-next').addEventListener('click', initArrangeScreen);
 
 
@@ -433,23 +432,103 @@ function placePhotoInSlot(slot, photoIdx) {
 
 
 /* ─────────────────────────────────────────────────────────
-   ARRANGE — CONFIRM / DONE
+   ARRANGE — CONFIRM → CONFIRM SCREEN
    ───────────────────────────────────────────────────────── */
-$('btn-confirm').addEventListener('click', handleConfirmOrDone);
+let collageDataURL = null;
 
-function handleConfirmOrDone() {
-    const btn = $('btn-confirm');
+$('btn-confirm').addEventListener('click', handleConfirm);
 
-    if (!btn.classList.contains('done-mode')) {
-        btn.textContent = 'DONE';
-        btn.classList.add('done-mode');
-        [$('btn-print-final'), $('btn-download-final')].forEach(b => {
-            if (b) b.classList.remove('hidden');
+async function handleConfirm() {
+    // Require all 3 slots filled
+    const filled = slotAssignments.filter(s => s !== null).length;
+    if (filled < 3) {
+        alert('Please place all 3 photos before confirming.');
+        return;
+    }
+
+    showLoading('GENERATING COLLAGE…');
+    await sleep(80);
+
+    try {
+        collageDataURL = await exportCollage(0.95);
+
+        // Save to server
+        const response = await fetch('save.php', {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify({ image: collageDataURL }),
         });
-    } else {
-        capturedPhotos  = [];
-        slotAssignments = [null, null, null];
-        showScreen('start');
+        if (!response.ok) {
+            const err = await response.json().catch(() => ({}));
+            throw new Error(err.error || `Server error ${response.status}`);
+        }
+        const { url } = await response.json();
+        collageServerURL = url;
+
+        // Show confirm screen
+        $('confirm-preview-img').src = collageDataURL;
+        hideLoading();
+        showScreen('confirm');
+
+    } catch (err) {
+        hideLoading();
+        console.error('Collage error:', err);
+        alert('Could not generate collage.\n\n' + err.message);
+    }
+}
+
+let collageServerURL = '';
+
+// RETURN from confirm screen → back to arrange
+$('btn-confirm-back').addEventListener('click', () => showScreen('arrange'));
+
+// CONFIRM on confirm screen → show final screen
+$('btn-confirm-proceed').addEventListener('click', () => {
+    $('final-preview-img').src = collageDataURL;
+    showScreen('final');
+});
+
+/* ─────────────────────────────────────────────────────────
+   FINAL SCREEN
+   ───────────────────────────────────────────────────────── */
+$('btn-final-done').addEventListener('click', () => {
+    capturedPhotos  = [];
+    slotAssignments = [null, null, null];
+    collageDataURL  = null;
+    collageServerURL = '';
+    showScreen('start');
+});
+
+$('btn-final-download').addEventListener('click', handleQRFinal);
+$('btn-final-print').addEventListener('click', () => {
+    printCopies = 1;
+    $('copies-value').textContent = '1';
+    $('print-modal').classList.remove('hidden');
+});
+
+async function handleQRFinal() {
+    if (collageServerURL) {
+        showQRModal(collageServerURL);
+        return;
+    }
+    // Fallback: re-save
+    showLoading('SAVING PHOTO…');
+    await sleep(60);
+    try {
+        const dataURL = collageDataURL || await exportCollage(0.95);
+        const response = await fetch('save.php', {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify({ image: dataURL }),
+        });
+        if (!response.ok) throw new Error(`Server error ${response.status}`);
+        const { url } = await response.json();
+        collageServerURL = url;
+        hideLoading();
+        showQRModal(url);
+    } catch (err) {
+        hideLoading();
+        alert('Could not save photo.\n\n' + err.message);
     }
 }
 
@@ -468,7 +547,7 @@ async function exportCollage(quality = 0.95) {
 
     // Draw the collage template as background
     const templateImg = new Image();
-    templateImg.src = 'asset/image.png';
+    templateImg.src = 'asset/template.webp';
     await new Promise(resolve => {
         if (templateImg.complete && templateImg.naturalWidth) { resolve(); return; }
         templateImg.onload  = resolve;
@@ -551,7 +630,7 @@ async function handlePrint(copies = 1) {
     await sleep(80);
 
     try {
-        const dataURL  = await exportCollage(0.95);
+        const dataURL  = collageDataURL || await exportCollage(0.95);
         const printArea = $('print-area');
 
         // Build one .print-page per copy — browser prints each as a separate page
@@ -586,38 +665,8 @@ async function handlePrint(copies = 1) {
 
 
 /* ─────────────────────────────────────────────────────────
-   QR CODE — SAVE TO SERVER & SHOW DOWNLOAD QR
+   QR CODE — SHOW DOWNLOAD QR
    ───────────────────────────────────────────────────────── */
-$('btn-download-final').addEventListener('click', handleQR);
-
-async function handleQR() {
-    showLoading('SAVING PHOTO…');
-    await sleep(60);
-
-    try {
-        const dataURL = await exportCollage(0.95);
-
-        const response = await fetch('save.php', {
-            method:  'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body:    JSON.stringify({ image: dataURL }),
-        });
-
-        if (!response.ok) {
-            const err = await response.json().catch(() => ({}));
-            throw new Error(err.error || `Server error ${response.status}`);
-        }
-
-        const { url } = await response.json();
-        hideLoading();
-        showQRModal(url);
-
-    } catch (err) {
-        hideLoading();
-        console.error('QR save error:', err);
-        alert('Could not save photo.\n\n' + err.message);
-    }
-}
 
 function showQRModal(url) {
     const modal   = $('qr-modal');

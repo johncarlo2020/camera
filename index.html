@@ -16,18 +16,22 @@
     <!-- ══════════════════════════════════════════════ -->
     <div id="screen-start" class="screen active">
 
-        <!-- TH flag stripe bar — top decoration -->
-        <div class="th-flag-bar">
-            <div class="th-flag-navy"></div>
-            <div class="th-flag-white"></div>
-            <div class="th-flag-red"></div>
+        <!-- Header logo: Hosted by Hilfiger — Summer Gazette 2026 -->
+        <div class="start-header">
+            <img class="start-header-img" src="asset/header.webp" alt="Hosted by Hilfiger — Summer Gazette 2026">
         </div>
 
-        <div class="start-content">
-            <img class="start-logo" src="asset/logo.png" alt="Tommy Hilfiger">
-            <p class="start-event">PHOTO SHOOT</p>
-            <p class="start-sub">3 SHOTS &nbsp;·&nbsp; ARRANGE &nbsp;·&nbsp; PRINT A3</p>
-            <button id="btn-start" class="btn-primary btn-glow">START</button>
+        <!-- Middle empty area -->
+        <div class="start-middle"></div>
+
+        <!-- CTA -->
+        <div class="start-cta">
+            <button id="btn-start" class="btn-start-box">START</button>
+        </div>
+
+        <!-- Footer: Tommy Hilfiger logo -->
+        <div class="start-footer-bar">
+            <img class="start-footer-logo" src="asset/logo.png" alt="Tommy Hilfiger">
         </div>
 
         <!-- Shown only when page is not in a secure context -->
@@ -44,77 +48,117 @@
                 <p class="iw-alt">Herd automatically provisions HTTPS for <code>.test</code> sites.</p>
             </div>
         </div>
+    </div>
 
-        <p class="start-footer">Camera access required · <span id="origin-badge"></span></p>
+    <!-- ══════════════════════════════════════════════ -->
+    <!--                  INTRO SCREEN                  -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div id="screen-intro" class="screen">
+
+        <!-- Header logo -->
+        <div class="start-header">
+            <img class="start-header-img" src="asset/header.webp" alt="Hosted by Hilfiger — Summer Gazette 2026">
+        </div>
+
+        <!-- Middle: instruction text -->
+        <div class="intro-middle">
+            <p class="intro-text">GET READY! 3 SHOTS COMING<br>POSE WITH EVERY COUNTDOWN!</p>
+        </div>
+
+        <!-- CTA -->
+        <div class="start-cta">
+            <button id="btn-lets-go" class="btn-start-box">LET'S GO</button>
+        </div>
+
+        <!-- Footer -->
+        <div class="start-footer-bar">
+            <img class="start-footer-logo" src="asset/logo.png" alt="Tommy Hilfiger">
+        </div>
+
     </div>
 
     <!-- ══════════════════════════════════════════════ -->
     <!--                 CAMERA SCREEN                  -->
     <!-- ══════════════════════════════════════════════ -->
-    <div id="screen-camera" class="screen">
+    <!--               COUNTDOWN SCREEN                 -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div id="screen-countdown" class="screen">
 
-        <!-- Top bar -->
-        <div class="cam-header">
-            <button id="btn-retake-camera" class="btn-ghost">← Back</button>
+        <!-- Header -->
+        <div class="start-header">
+            <img class="start-header-img" src="asset/header.webp" alt="Hosted by Hilfiger — Summer Gazette 2026">
+        </div>
 
-            <div class="cam-wordmark"><img class="cam-logo" src="asset/logo.png" alt="Tommy Hilfiger"></div>
-
-            <div class="cam-header-right">
-                <div class="shot-indicators">
-                    <div class="dot" id="ind-1"></div>
-                    <div class="dot" id="ind-2"></div>
-                    <div class="dot" id="ind-3"></div>
-                </div>
-                <div class="shot-label">
-                    <span id="shot-current">0</span> / 3
-                </div>
+        <!-- Countdown area -->
+        <div id="cd-area" class="cd-area">
+            <!-- Live camera fill -->
+            <div class="cd-camera-wrap">
+                <video id="camera-video" autoplay playsinline muted class="cd-camera-video"></video>
+            </div>
+            <!-- Overlay text -->
+            <div class="cd-overlay">
+                <p id="cd-shot-label" class="cd-shot-label">First Shot!</p>
+                <p class="cd-get-ready">Get Ready!</p>
+                <div id="cd-number" class="cd-number"></div>
             </div>
         </div>
 
-        <!-- Video + overlays -->
-        <div class="cam-viewport">
-            <video id="camera-video" autoplay playsinline muted></video>
-
-            <!-- Countdown -->
-            <div id="countdown-overlay" class="countdown-overlay hidden">
-                <span id="countdown-number" class="countdown-num">3</span>
-            </div>
-
-            <!-- Flash -->
-            <div id="flash-overlay" class="flash-overlay"></div>
-
-            <!-- Captured strip (bottom-right) -->
-            <div class="capture-strip">
-                <div class="strip-cell" id="strip-1"><span class="cell-label">1</span></div>
-                <div class="strip-cell" id="strip-2"><span class="cell-label">2</span></div>
-                <div class="strip-cell" id="strip-3"><span class="cell-label">3</span></div>
+        <!-- Photo reveal (shown after each shot) -->
+        <div id="cd-reveal" class="cd-reveal hidden">
+            <p id="cd-reveal-title" class="cd-reveal-title">THE FIRST SHOT!</p>
+            <div class="cd-photo-wrap">
+                <img id="cd-photo" class="cd-photo" alt="">
+                <button id="btn-cd-next" class="btn-start-box cd-next-btn">NEXT</button>
             </div>
         </div>
 
-        <!-- Status bar -->
-        <div class="cam-footer">
-            <span id="camera-status" class="status-text">Initialising…</span>
+        <!-- Shot dot indicators -->
+        <div class="cd-dots">
+            <span class="cd-dot" id="cd-dot-0"></span>
+            <span class="cd-dot" id="cd-dot-1"></span>
+            <span class="cd-dot" id="cd-dot-2"></span>
+        </div>
+
+        <!-- Footer -->
+        <div class="start-footer-bar">
+            <img class="start-footer-logo" src="asset/logo.png" alt="Tommy Hilfiger">
         </div>
 
         <!-- Hidden capture canvas -->
         <canvas id="capture-canvas" style="display:none"></canvas>
+
+        <!-- Flash overlay -->
+        <div id="flash-overlay" class="flash-overlay"></div>
+
     </div>
 
     <!-- ══════════════════════════════════════════════ -->
     <!--                 REVIEW SCREEN                  -->
     <!-- ══════════════════════════════════════════════ -->
     <div id="screen-review" class="screen">
-        <div class="th-flag-bar">
-            <div class="th-flag-navy"></div>
-            <div class="th-flag-white"></div>
-            <div class="th-flag-red"></div>
+
+        <!-- Header -->
+        <div class="review-header">
+            <button id="btn-review-retake" class="btn-start-box review-retake-btn">RETAKE</button>
+            <img class="start-header-img" src="asset/header.webp" alt="Hosted by Hilfiger — Summer Gazette 2026">
         </div>
-        <div class="review-layout">
-            <img class="review-logo" src="asset/logo.png" alt="Tommy Hilfiger">
-            <h2 class="review-title">YOUR SHOTS</h2>
-            <div class="review-strip" id="review-strip"></div>
-            <button id="btn-review-next" class="btn-confirm-dark">NEXT →</button>
+
+        <!-- Title -->
+        <h2 class="review-title">THE FINAL PHOTOS</h2>
+
+        <!-- Photo grid: 2 top, 1 bottom-centre -->
+        <div class="review-grid" id="review-strip"></div>
+
+        <!-- CTA -->
+        <div class="start-cta">
+            <button id="btn-review-next" class="btn-start-box">NEXT</button>
         </div>
+
+        <!-- Footer -->
+        <div class="start-footer-bar">
+            <img class="start-footer-logo" src="asset/logo.png" alt="Tommy Hilfiger">
+        </div>
+
     </div>
 
     <!-- ══════════════════════════════════════════════ -->
@@ -122,17 +166,16 @@
     <!-- ══════════════════════════════════════════════ -->
     <div id="screen-arrange" class="screen">
 
-        <!-- Header: TH logo + back -->
-        <div class="arrange-header">
-            <button id="btn-arrange-back" class="btn-ghost-dark">← Retake</button>
-            <div class="arrange-logo">
-                <img src="asset/logo.png" alt="Tommy Hilfiger">
-            </div>
-            <div class="arrange-header-spacer"></div>
+        <!-- Header logo -->
+        <div class="start-header">
+            <img class="start-header-img" src="asset/header.webp" alt="Hosted by Hilfiger — Summer Gazette 2026">
         </div>
 
-        <!-- Instruction -->
-        <p class="arrange-instruction">Drag the photo to<br>your preferred spot</p>
+        <!-- Compact control row: UNDO + instruction -->
+        <div class="arrange-header">
+            <button id="btn-arrange-back" class="btn-start-box arrange-undo-btn">UNDO</button>
+            <span class="arrange-header-title">Drag the photo to your preferred spot</span>
+        </div>
 
         <!-- Body: photo tray + collage board -->
         <div class="arrange-body">
@@ -141,27 +184,17 @@
             <div class="photo-tray" id="photo-tray">
                 <div class="tray-item" draggable="true" data-idx="0">
                     <img alt="Photo 1">
-                    <span class="tray-num">1</span>
                 </div>
                 <div class="tray-item" draggable="true" data-idx="1">
                     <img alt="Photo 2">
-                    <span class="tray-num">2</span>
                 </div>
                 <div class="tray-item" draggable="true" data-idx="2">
                     <img alt="Photo 3">
-                    <span class="tray-num">3</span>
                 </div>
             </div>
 
-            <!-- Right: collage board with drop zones -->
+            <!-- Right: collage board — template.webp background + drop zones -->
             <div class="collage-board" id="collage-board">
-                <!-- TH logo watermark inside board -->
-                <div class="board-logo">
-                    TOMMY
-                    <span class="th-flag-icon th-flag-icon--sm" aria-hidden="true"></span>
-                    HILFIGER
-                </div>
-                <!-- Absolutely positioned drop zones matching wireframe -->
                 <div class="board-slots">
                     <div class="drop-slot" data-slot="0">
                         <span class="slot-hint">DRAG YOUR<br>PHOTO HERE</span>
@@ -177,15 +210,86 @@
 
         </div>
 
+        <!-- Footer: confirm + logo -->
+        <div class="start-cta" style="padding-top:8px;padding-bottom:8px;">
+            <button id="btn-confirm" class="btn-start-box">CONFIRM</button>
+        </div>
+        <div class="start-footer-bar" style="padding-bottom:16px;">
+            <img class="start-footer-logo" src="asset/logo.png" alt="Tommy Hilfiger">
+        </div>
+
+        <!-- Hidden action buttons (kept for JS compatibility) -->
+        <button id="btn-print-final"    class="hidden" style="display:none"></button>
+        <button id="btn-download-final" class="hidden" style="display:none"></button>
+
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!--               CONFIRM SCREEN                   -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div id="screen-confirm" class="screen">
+
+        <!-- Header -->
+        <div class="start-header">
+            <img class="start-header-img" src="asset/header.webp" alt="Hosted by Hilfiger — Summer Gazette 2026">
+        </div>
+
+        <!-- Control row -->
+        <div class="confirm-header">
+            <button id="btn-confirm-back" class="btn-start-box confirm-back-btn">RETURN</button>
+        </div>
+
+        <!-- Title -->
+        <p class="confirm-voila">Voilà! You're Done</p>
+
+        <!-- Collage preview -->
+        <div class="confirm-preview-wrap">
+            <img id="confirm-preview-img" class="confirm-preview-img" alt="Your collage">
+        </div>
+
+        <!-- CTA -->
+        <div class="start-cta" style="padding-top:8px;padding-bottom:8px;">
+            <button id="btn-confirm-proceed" class="btn-start-box">CONFIRM</button>
+        </div>
+
         <!-- Footer -->
-        <div class="arrange-footer">
-            <button id="btn-print-final"    class="side-btn hidden" title="Print A3">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-            </button>
-            <button id="btn-download-final" class="side-btn hidden" title="QR download">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="5" y="5" width="3" height="3" fill="currentColor" stroke="none"/><rect x="16" y="5" width="3" height="3" fill="currentColor" stroke="none"/><rect x="5" y="16" width="3" height="3" fill="currentColor" stroke="none"/><rect x="16" y="16" width="3" height="3" fill="currentColor" stroke="none"/><rect x="19" y="19" width="2" height="2" fill="currentColor" stroke="none"/></svg>
-            </button>
-            <button id="btn-confirm" class="btn-confirm-outline">CONFIRM</button>
+        <div class="start-footer-bar" style="padding-bottom:16px;">
+            <img class="start-footer-logo" src="asset/logo.png" alt="Tommy Hilfiger">
+        </div>
+
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!--               FINAL SCREEN                     -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div id="screen-final" class="screen">
+
+        <!-- Header -->
+        <div class="start-header">
+            <img class="start-header-img" src="asset/header.webp" alt="Hosted by Hilfiger — Summer Gazette 2026">
+        </div>
+
+        <!-- Control row: download + print -->
+        <div class="final-header">
+            <div class="final-actions-top">
+                <button id="btn-final-download" class="btn-start-box final-action-btn">DOWNLOAD <span class="final-btn-icon">&#x1F4F1;</span></button>
+                <button id="btn-final-print"    class="btn-start-box final-action-btn">PRINT OUT <span class="final-btn-icon">&#128438;</span></button>
+            </div>
+        </div>
+
+        <!-- Collage preview -->
+        <div class="confirm-preview-wrap">
+            <img id="final-preview-img" class="confirm-preview-img" alt="Your collage">
+        </div>
+
+        <!-- CTA -->
+        <div class="start-cta" style="padding-top:8px;padding-bottom:8px;">
+            <button id="btn-final-done" class="btn-start-box">DONE</button>
+        </div>
+
+        <!-- Footer -->
+        <div class="start-footer-bar" style="padding-bottom:16px;">
+            <img class="start-footer-logo" src="asset/logo.png" alt="Tommy Hilfiger">
         </div>
 
     </div>

@@ -51,155 +51,155 @@ $dlHref  = $base . '&dl=1';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#001E62">
+    <meta name="theme-color" content="#ffffff">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Tommy Hilfiger · Your Photo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&family=Inter:wght@400;500&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             min-height: 100svh;
-            background: #f5f4f0;
+            background: #fff;
             font-family: 'Montserrat', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             -webkit-font-smoothing: antialiased;
+            color: #1a1a1a;
         }
 
-        /* ── TH flag stripe ── */
-        .flag-bar { width: 100%; height: 6px; display: flex; flex-shrink: 0; }
-        .flag-bar div { flex: 1; }
-        .f-navy  { background: #001E62; }
-        .f-white { background: #fff; }
-        .f-red   { background: #CE1126; }
-
-        /* ── Header ── */
-        .header {
+        /* ── Site header ── */
+        .site-header {
             width: 100%;
-            padding: 18px 20px 16px;
-            text-align: center;
-            background: #fff;
-            border-bottom: 1px solid #e8e8e8;
+            max-width: 480px;
+            padding: 24px 20px 16px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
         }
 
-        .logo {
+        .header-branding {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .header-branding img {
+            width: 100%;
+            max-width: 220px;
+            display: block;
+        }
+
+        /* ── Action buttons ── */
+        .header-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .btn-action {
             display: inline-flex;
             align-items: center;
             gap: 7px;
-            font-size: .72rem;
-            font-weight: 800;
-            color: #001E62;
-            letter-spacing: 3px;
+            padding: 8px 14px;
+            background: #fff;
+            color: #1a1a1a;
+            border: 1.5px solid #1a1a1a;
+            font-family: 'Montserrat', sans-serif;
+            font-size: .6rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-decoration: none;
+            cursor: pointer;
+            white-space: nowrap;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .flag-icon {
-            display: inline-block;
-            width: 22px;
-            height: 14px;
-            background: linear-gradient(to right, #fff 50%, #CE1126 50%);
-            border: 2px solid #001E62;
-            border-radius: 1px;
+        .btn-action:active,
+        .btn-action:hover { background: #1a1a1a; color: #fff; }
+        .btn-action:hover svg,
+        .btn-action:active svg { stroke: #fff; }
+
+        .btn-action svg {
+            width: 13px;
+            height: 13px;
+            stroke: #1a1a1a;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
             flex-shrink: 0;
-            vertical-align: middle;
-        }
-
-        .header-sub {
-            margin-top: 5px;
-            font-size: .52rem;
-            letter-spacing: 3.5px;
-            color: #bbb;
+            transition: stroke .15s;
         }
 
         /* ── Photo ── */
         .photo-wrap {
             width: 100%;
             max-width: 480px;
-            padding: 24px 16px 0;
+            padding: 4px 20px 0;
         }
 
         .photo-wrap img {
             width: 100%;
             display: block;
-            border-radius: 2px;
-            box-shadow: 0 8px 36px rgba(0,0,0,.20);
-        }
-
-        /* ── Actions ── */
-        .actions {
-            width: 100%;
-            max-width: 480px;
-            padding: 24px 16px 48px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .btn-save {
-            display: block;
-            width: 100%;
-            padding: 17px;
-            background: #001E62;
-            color: #fff;
-            border: none;
-            border-radius: 0;
-            font-family: 'Montserrat', sans-serif;
-            font-size: .85rem;
-            font-weight: 800;
-            letter-spacing: 4px;
-            text-align: center;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .btn-save:active { background: #000d38; }
-
-        .note {
-            text-align: center;
-            font-size: .58rem;
-            color: #bbb;
-            letter-spacing: 1.5px;
-            line-height: 1.7;
+            box-shadow: 0 4px 24px rgba(0,0,0,.12);
         }
 
         /* ── Footer ── */
-        .footer {
+        .site-footer {
             margin-top: auto;
-            padding: 20px;
-            font-size: .5rem;
-            letter-spacing: 2px;
-            color: #ccc;
-            text-align: center;
+            padding: 28px 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
+
+        .footer-logo { height: 20px; display: block; }
     </style>
 </head>
 <body>
 
-    <div class="flag-bar">
-        <div class="f-navy"></div>
-        <div class="f-white"></div>
-        <div class="f-red"></div>
-    </div>
-
-    <div class="header">
-        <div class="logo">
-            TOMMY <span class="flag-icon"></span> HILFIGER
+    <div class="site-header">
+        <div class="header-branding">
+            <img src="asset/header.webp" alt="Hosted by Hilfiger — Summer Gazette 2026">
         </div>
-        <p class="header-sub">PHOTO SHOOT</p>
+        <div class="header-actions">
+            <a class="btn-action" href="<?= $dlHref ?>">
+                <svg viewBox="0 0 24 24"><path d="M12 3v13M5 16l7 7 7-7M3 21h18"/></svg>
+                DOWNLOAD
+            </a>
+            <button class="btn-action" id="btn-share">
+                <svg viewBox="0 0 24 24"><path d="M12 21V8M5 15l7-7 7 7M3 3h18"/></svg>
+                SHARE
+            </button>
+        </div>
     </div>
 
     <div class="photo-wrap">
         <img src="<?= $viewSrc ?>" alt="Your Tommy Hilfiger Photo">
     </div>
 
-    <div class="actions">
-        <a class="btn-save" href="<?= $dlHref ?>">SAVE PHOTO</a>
-        <p class="note">TAP SAVE PHOTO TO DOWNLOAD TO YOUR DEVICE</p>
-    </div>
+    <footer class="site-footer">
+        <img src="asset/logo.png" alt="Tommy Hilfiger" class="footer-logo">
+    </footer>
 
-    <p class="footer">TOMMY HILFIGER &nbsp;·&nbsp; PHOTO SHOOT</p>
+    <script>
+        document.getElementById('btn-share').addEventListener('click', async function () {
+            const url = <?= json_encode($base) ?>;
+            try {
+                if (navigator.share) {
+                    await navigator.share({ title: 'Tommy Hilfiger — Summer Gazette 2026', url: url });
+                } else if (navigator.clipboard) {
+                    await navigator.clipboard.writeText(url);
+                    this.textContent = 'COPIED!';
+                    setTimeout(() => { this.innerHTML = '<svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0"><path d="M12 21V8M5 15l7-7 7 7M3 3h18"/></svg> SHARE'; }, 2000);
+                }
+            } catch (e) {}
+        });
+    </script>
 
 </body>
 </html>
