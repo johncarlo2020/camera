@@ -122,6 +122,7 @@ html, body {
     justify-content: center;
     padding: 0 24px 32px;
     flex-shrink: 0;
+    margin-bottom: 20svh;
 }
 
 .btn-start-box {
@@ -642,6 +643,12 @@ html, body {
     overflow: hidden;
 }
 
+#screen-arrange .start-cta,
+#screen-confirm .start-cta,
+#screen-final .start-cta {
+    margin-bottom: 0;
+}
+
 /* ── Header ─────────────────────────────────────────── */
 .arrange-header {
     display: flex;
@@ -712,6 +719,7 @@ html, body {
     transition: opacity .2s, transform .15s;
     user-select: none;
     -webkit-user-drag: element;
+    touch-action: none;
 }
 
 .tray-item:active { cursor: grabbing; }

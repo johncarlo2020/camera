@@ -347,8 +347,10 @@ $('btn-arrange-back').addEventListener('click', initReviewScreen);
 
 
 /* ─────────────────────────────────────────────────────────
-   ARRANGE — DRAG & DROP  (event delegation, registered once)
+   ARRANGE — DRAG & DROP  (mouse + touch)
    ───────────────────────────────────────────────────────── */
+
+/* ── Mouse drag (desktop) ── */
 document.addEventListener('dragstart', e => {
     const item = e.target.closest('.tray-item');
     if (!item) return;
@@ -385,6 +387,96 @@ document.addEventListener('drop', e => {
     placePhotoInSlot(slot, draggedPhotoIdx);
     draggedPhotoIdx = null;
 });
+
+/* ── Touch drag (mobile / touchscreen) ── */
+let _touchDragIdx  = null;   // photoIdx being dragged
+let _touchClone    = null;   // floating ghost image
+let _touchLastSlot = null;   // slot currently hovered
+
+document.addEventListener('touchstart', e => {
+    const item = e.target.closest('.tray-item');
+    if (!item) return;
+    e.preventDefault(); // stop tray scroll-container from stealing the touch
+    _touchDragIdx = parseInt(item.dataset.idx);
+    item.classList.add('dragging');
+
+    // Build ghost clone
+    const rect = item.getBoundingClientRect();
+    const srcImg = item.querySelector('img');
+    _touchClone = srcImg ? srcImg.cloneNode(true) : document.createElement('div');
+    Object.assign(_touchClone.style, {
+        position:      'fixed',
+        left:          rect.left + 'px',
+        top:           rect.top  + 'px',
+        width:         rect.width  + 'px',
+        height:        rect.height + 'px',
+        objectFit:     'cover',
+        opacity:       '0.80',
+        pointerEvents: 'none',
+        zIndex:        '99999',
+        borderRadius:  '0',
+        boxShadow:     '0 8px 24px rgba(0,0,0,.35)',
+    });
+    document.body.appendChild(_touchClone);
+}, { passive: false });
+
+document.addEventListener('touchmove', e => {
+    if (_touchDragIdx === null) return;
+    e.preventDefault();   // stop page scroll / reload while dragging
+
+    const touch = e.touches[0];
+
+    // Move ghost
+    if (_touchClone) {
+        _touchClone.style.left = (touch.clientX - parseInt(_touchClone.style.width)  / 2) + 'px';
+        _touchClone.style.top  = (touch.clientY - parseInt(_touchClone.style.height) / 2) + 'px';
+    }
+
+    // Highlight slot under finger
+    _touchClone && (_touchClone.style.display = 'none');
+    const elUnder = document.elementFromPoint(touch.clientX, touch.clientY);
+    _touchClone && (_touchClone.style.display = '');
+
+    const slot = elUnder ? elUnder.closest('.drop-slot') : null;
+
+    if (slot !== _touchLastSlot) {
+        if (_touchLastSlot) _touchLastSlot.classList.remove('drag-over');
+        if (slot)           slot.classList.add('drag-over');
+        _touchLastSlot = slot;
+    }
+}, { passive: false });
+
+document.addEventListener('touchend', e => {
+    if (_touchDragIdx === null) return;
+
+    // Remove ghost
+    if (_touchClone) { _touchClone.remove(); _touchClone = null; }
+
+    // Clear dragging style on source
+    const srcItem = document.querySelector(`.tray-item[data-idx="${_touchDragIdx}"]`);
+    if (srcItem) srcItem.classList.remove('dragging');
+
+    // Clear slot highlight
+    if (_touchLastSlot) _touchLastSlot.classList.remove('drag-over');
+
+    // Drop
+    if (_touchLastSlot) {
+        placePhotoInSlot(_touchLastSlot, _touchDragIdx);
+    }
+
+    _touchDragIdx  = null;
+    _touchLastSlot = null;
+}, { passive: true });
+
+document.addEventListener('touchcancel', () => {
+    if (_touchClone) { _touchClone.remove(); _touchClone = null; }
+    const srcItem = _touchDragIdx !== null
+        ? document.querySelector(`.tray-item[data-idx="${_touchDragIdx}"]`) : null;
+    if (srcItem) srcItem.classList.remove('dragging');
+    if (_touchLastSlot) _touchLastSlot.classList.remove('drag-over');
+    _touchDragIdx  = null;
+    _touchLastSlot = null;
+}, { passive: true });
 
 function placePhotoInSlot(slot, photoIdx) {
     const slotIdx = parseInt(slot.dataset.slot);
@@ -625,12 +717,31 @@ $('btn-print-confirm').addEventListener('click', () => {
     handlePrint(printCopies);
 });
 
+async function rotateDataURL180(dataURL) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width  = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx.translate(img.width, img.height);
+            ctx.rotate(Math.PI);
+            ctx.drawImage(img, 0, 0);
+            resolve(canvas.toDataURL('image/jpeg', 0.95));
+        };
+        img.onerror = reject;
+        img.src = dataURL;
+    });
+}
+
 async function handlePrint(copies = 1) {
     showLoading('GENERATING A3 AT 300 DPI…');
     await sleep(80);
 
     try {
-        const dataURL  = collageDataURL || await exportCollage(0.95);
+        const raw      = collageDataURL || await exportCollage(0.95);
+        const dataURL  = await rotateDataURL180(raw);
         const printArea = $('print-area');
 
         // Build one .print-page per copy — browser prints each as a separate page

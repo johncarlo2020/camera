@@ -164,7 +164,7 @@ $dlHref  = $base . '&dl=1';
 
     <div class="site-header">
         <div class="header-branding">
-            <img src="asset/header.webp" alt="Hosted by Hilfiger — Summer Gazette 2026">
+            <!-- <img src="asset/header.webp" alt="Hosted by Hilfiger — Summer Gazette 2026"> -->
         </div>
         <div class="header-actions">
             <a class="btn-action" href="<?= $dlHref ?>">
@@ -183,7 +183,7 @@ $dlHref  = $base . '&dl=1';
     </div>
 
     <footer class="site-footer">
-        <img src="asset/logo.png" alt="Tommy Hilfiger" class="footer-logo">
+        <!-- <img src="asset/logo.png" alt="Tommy Hilfiger" class="footer-logo"> -->
     </footer>
 
     <script>
