@@ -168,6 +168,11 @@ $host   = $_SERVER['HTTP_HOST'];
             font-weight: 500;
             white-space: nowrap;
         }
+        .card-actions {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
         .card-btn {
             padding: 4px 12px;
             font-family: 'Montserrat', sans-serif;
@@ -298,6 +303,174 @@ $host   = $_SERVER['HTTP_HOST'];
             display: block;
             margin-top: 20px;
         }
+
+        /* ── Print modal (same as index) ── */
+        .qr-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9998;
+            backdrop-filter: blur(4px);
+            animation: fadeInModal .25s ease;
+        }
+        .qr-modal.hidden { display: none; }
+        @keyframes fadeInModal {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+        .qr-card {
+            background: #f0f0f0;
+            width: min(340px, 92vw);
+            border: 1.5px solid #888;
+            box-shadow: 0 8px 32px rgba(0,0,0,.14);
+            overflow: hidden;
+            animation: slideUpModal .28s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .qr-card .th-flag-bar { display: none; }
+        @keyframes slideUpModal {
+            from { transform: translateY(20px); opacity: 0; }
+            to   { transform: translateY(0);    opacity: 1; }
+        }
+        .th-flag-bar {
+            display: flex;
+            width: 100%;
+            height: 8px;
+        }
+        .th-flag-navy  { flex: 1; background: #001E62; }
+        .th-flag-white { flex: 1; background: #ffffff; }
+        .th-flag-red   { flex: 1; background: #CE1126; }
+        .qr-body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 32px 28px 28px;
+            gap: 20px;
+        }
+        .modal-logo {
+            width: clamp(100px, 28vw, 160px);
+            height: auto;
+            display: block;
+            margin: 0 auto 4px;
+        }
+        .qr-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: .68rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            letter-spacing: 4px;
+        }
+        .copies-counter {
+            display: flex;
+            align-items: center;
+            border: 1.5px solid #1a1a1a;
+            overflow: hidden;
+        }
+        .copies-btn {
+            width: 48px;
+            height: 48px;
+            background: transparent;
+            color: #1a1a1a;
+            border: none;
+            font-size: 1.4rem;
+            font-weight: 700;
+            line-height: 1;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            transition: background .15s, color .15s;
+            flex-shrink: 0;
+        }
+        .copies-btn:hover  { background: #1a1a1a; color: #fff; }
+        .copies-btn:active { background: #333;    color: #fff; }
+        #copies-value {
+            min-width: 64px;
+            text-align: center;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #1a1a1a;
+            letter-spacing: 1px;
+            padding: 0 4px;
+            border-left: 1.5px solid #1a1a1a;
+            border-right: 1.5px solid #1a1a1a;
+            user-select: none;
+        }
+        .print-modal-actions {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            margin-top: 4px;
+        }
+        .btn-ghost-dark {
+            flex: 1;
+            padding: 12px;
+            font-size: .72rem;
+            letter-spacing: 3px;
+            text-align: center;
+            background: transparent;
+            color: #1a1a1a;
+            border: 1.5px solid #1a1a1a;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background .18s, color .18s;
+        }
+        .btn-ghost-dark:hover { background: #1a1a1a; color: #fff; }
+        .btn-primary-modal {
+            flex: 1;
+            padding: 12px;
+            font-size: .72rem;
+            letter-spacing: 3px;
+            text-align: center;
+            background: #3a3a3a;
+            color: #fff;
+            border: none;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            cursor: pointer;
+            transition: background .18s;
+        }
+        .btn-primary-modal:hover { background: #1a1a1a; }
+
+        /* ── Print area (hidden on screen, visible on print) ── */
+        .print-area { display: none; }
+
+        @media print {
+            body > *:not(.print-area) {
+                visibility: hidden !important;
+                display: none !important;
+            }
+            body { overflow: visible; background: #fff; }
+            @page { size: A3 portrait; margin: 0; }
+            .print-area {
+                display: block !important;
+                visibility: visible !important;
+                position: static !important;
+                width: 100% !important;
+                height: auto !important;
+            }
+            .print-page {
+                display: block !important;
+                visibility: visible !important;
+                width: 297mm;
+                height: 420mm;
+                page-break-after: always;
+                break-after: page;
+                overflow: hidden;
+            }
+            .print-page:last-child {
+                page-break-after: avoid;
+                break-after: avoid;
+            }
+            .print-page img {
+                display: block !important;
+                width: 297mm !important;
+                height: 420mm !important;
+                visibility: visible !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -337,6 +510,8 @@ $host   = $_SERVER['HTTP_HOST'];
                 <span class="card-date"><?= htmlspecialchars($date) ?></span>
                 <div class="card-actions">
                     <a href="<?= htmlspecialchars($dlUrl, ENT_QUOTES) ?>" class="card-btn">DOWNLOAD</a>
+                    <button class="card-btn btn-print"
+                            data-url="<?= htmlspecialchars($viewUrl, ENT_QUOTES) ?>">PRINT</button>
                 </div>
             </div>
         </div>
@@ -391,6 +566,33 @@ $host   = $_SERVER['HTTP_HOST'];
     </div>
 </div>
 
+<!-- Print copies modal (same as index) -->
+<div id="print-modal" class="qr-modal hidden">
+    <div class="qr-card">
+        <div class="th-flag-bar">
+            <div class="th-flag-navy"></div>
+            <div class="th-flag-white"></div>
+            <div class="th-flag-red"></div>
+        </div>
+        <div class="qr-body">
+            <img class="modal-logo" src="asset/logo.png" alt="Tommy Hilfiger">
+            <p class="qr-title">NUMBER OF COPIES</p>
+            <div class="copies-counter">
+                <button id="btn-copies-dec" class="copies-btn" aria-label="Decrease">&#8722;</button>
+                <span id="copies-value">1</span>
+                <button id="btn-copies-inc" class="copies-btn" aria-label="Increase">&#43;</button>
+            </div>
+            <div class="print-modal-actions">
+                <button id="btn-print-cancel" class="btn-ghost-dark">CANCEL</button>
+                <button id="btn-print-confirm" class="btn-primary-modal">PRINT</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Print area (hidden on screen, visible on @media print) -->
+<div id="print-area" class="print-area"></div>
+
 <script>
     const lightbox = document.getElementById('lightbox');
     const lbImg    = document.getElementById('lb-img');
@@ -410,6 +612,81 @@ $host   = $_SERVER['HTTP_HOST'];
     function closeLb() {
         lightbox.classList.remove('open');
         lbImg.src = '';
+    }
+
+    /* ── Print ── */
+    let printCopies    = 1;
+    let currentPrintUrl = '';
+
+    document.querySelectorAll('.btn-print').forEach(btn => {
+        btn.addEventListener('click', () => {
+            currentPrintUrl = btn.dataset.url;
+            printCopies = 1;
+            document.getElementById('copies-value').textContent = '1';
+            document.getElementById('print-modal').classList.remove('hidden');
+        });
+    });
+
+    document.getElementById('btn-copies-dec').addEventListener('click', () => {
+        if (printCopies > 1) document.getElementById('copies-value').textContent = --printCopies;
+    });
+
+    document.getElementById('btn-copies-inc').addEventListener('click', () => {
+        if (printCopies < 99) document.getElementById('copies-value').textContent = ++printCopies;
+    });
+
+    document.getElementById('btn-print-cancel').addEventListener('click', () => {
+        document.getElementById('print-modal').classList.add('hidden');
+    });
+
+    document.getElementById('btn-print-confirm').addEventListener('click', () => {
+        document.getElementById('print-modal').classList.add('hidden');
+        handleGalleryPrint(currentPrintUrl, printCopies);
+    });
+
+    function rotateURL180(url) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width  = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.translate(img.width, img.height);
+                ctx.rotate(Math.PI);
+                ctx.drawImage(img, 0, 0);
+                resolve(canvas.toDataURL('image/jpeg', 0.95));
+            };
+            img.onerror = reject;
+            img.src = url;
+        });
+    }
+
+    async function handleGalleryPrint(url, copies) {
+        let dataURL;
+        try {
+            dataURL = await rotateURL180(url);
+        } catch (e) {
+            // fallback: print without rotation if canvas fails
+            dataURL = url;
+        }
+        const printArea = document.getElementById('print-area');
+        printArea.innerHTML = '';
+        for (let i = 0; i < copies; i++) {
+            const page = document.createElement('div');
+            page.className = 'print-page';
+            const img = document.createElement('img');
+            img.src = dataURL;
+            img.alt = 'Photo';
+            page.appendChild(img);
+            printArea.appendChild(page);
+        }
+        const imgs = Array.from(printArea.querySelectorAll('img'));
+        await Promise.all(imgs.map(img =>
+            img.complete ? Promise.resolve() :
+            new Promise(resolve => { img.onload = resolve; img.onerror = resolve; })
+        ));
+        window.print();
     }
 </script>
 
