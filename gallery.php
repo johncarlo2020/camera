@@ -434,6 +434,21 @@ $host   = $_SERVER['HTTP_HOST'];
         }
         .btn-primary-modal:hover { background: #1a1a1a; }
 
+        /* ── QR modal ── */
+        .qr-canvas-wrap {
+            background: #fff;
+            padding: 12px;
+            border-radius: 2px;
+        }
+        .qr-url {
+            font-family: 'Inter', sans-serif;
+            font-size: .6rem;
+            color: var(--th-mid-gray);
+            text-align: center;
+            word-break: break-all;
+            max-width: 240px;
+        }
+
         /* ── Print area (hidden on screen, visible on print) ── */
         .print-area { display: none; }
 
@@ -510,6 +525,8 @@ $host   = $_SERVER['HTTP_HOST'];
                 <span class="card-date"><?= htmlspecialchars($date) ?></span>
                 <div class="card-actions">
                     <a href="<?= htmlspecialchars($dlUrl, ENT_QUOTES) ?>" class="card-btn">DOWNLOAD</a>
+                    <button class="card-btn btn-qr"
+                            data-url="<?= htmlspecialchars($dlUrl, ENT_QUOTES) ?>">QR</button>
                     <button class="card-btn btn-print"
                             data-url="<?= htmlspecialchars($viewUrl, ENT_QUOTES) ?>">PRINT</button>
                 </div>
@@ -590,9 +607,30 @@ $host   = $_SERVER['HTTP_HOST'];
     </div>
 </div>
 
+<!-- QR Download modal -->
+<div id="qr-modal" class="qr-modal hidden">
+    <div class="qr-card">
+        <div class="th-flag-bar">
+            <div class="th-flag-navy"></div>
+            <div class="th-flag-white"></div>
+            <div class="th-flag-red"></div>
+        </div>
+        <div class="qr-body">
+            <img class="modal-logo" src="asset/logo.png" alt="Tommy Hilfiger">
+            <p class="qr-title">SCAN TO DOWNLOAD</p>
+            <div class="qr-canvas-wrap">
+                <div id="qr-canvas"></div>
+            </div>
+            <p class="qr-url" id="qr-url-text"></p>
+            <button id="btn-qr-close" class="btn-primary-modal">CLOSE</button>
+        </div>
+    </div>
+</div>
+
 <!-- Print area (hidden on screen, visible on @media print) -->
 <div id="print-area" class="print-area"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script>
     const lightbox = document.getElementById('lightbox');
     const lbImg    = document.getElementById('lb-img');
@@ -660,6 +698,31 @@ $host   = $_SERVER['HTTP_HOST'];
             img.onerror = reject;
             img.src = url;
         });
+    }
+
+    /* ── QR ── */
+    document.querySelectorAll('.btn-qr').forEach(btn => {
+        btn.addEventListener('click', () => {
+            showGalleryQR(btn.dataset.url);
+        });
+    });
+
+    function showGalleryQR(url) {
+        const modal   = document.getElementById('qr-modal');
+        const urlText = document.getElementById('qr-url-text');
+        const wrap    = document.getElementById('qr-canvas');
+
+        urlText.textContent = url;
+        modal.classList.remove('hidden');
+
+        const qr = qrcode(0, 'M');
+        qr.addData(url);
+        qr.make();
+        wrap.innerHTML = qr.createImgTag(4, 4, 'Download QR code');
+        const img = wrap.querySelector('img');
+        if (img) img.style.cssText = 'display:block;width:220px;height:220px;image-rendering:pixelated';
+
+        document.getElementById('btn-qr-close').onclick = () => modal.classList.add('hidden');
     }
 
     async function handleGalleryPrint(url, copies) {
