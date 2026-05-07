@@ -7,6 +7,55 @@
  * ?id=<32 hex chars>&dl=1     → force-download the JPEG
  */
 
+/* ── Security headers ─────────────────────────────────── */
+header('X-Content-Type-Options: nosniff');
+header('X-Frame-Options: DENY');
+header('Referrer-Policy: strict-origin-when-cross-origin');
+
+/* ── Per-IP rate limit (download enumeration / scraping) ─ */
+(function () {
+    $ip     = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+    $hash   = hash('sha256', $ip);
+    $dir    = sys_get_temp_dir() . '/cam_dl_rl/';
+    $file   = $dir . $hash . '.json';
+    $now    = time();
+    $window = 60;
+    $max    = 30; // 30 download page hits per IP per minute
+
+    if (!is_dir($dir)) { mkdir($dir, 0700, true); }
+
+    // Probabilistic stale-file cleanup
+    if (random_int(1, 100) === 1) {
+        foreach (glob($dir . '*.json') as $f) {
+            if (filemtime($f) < $now - $window * 2) { @unlink($f); }
+        }
+    }
+
+    $fp = @fopen($file, 'c+');
+    if (!$fp || !flock($fp, LOCK_EX)) {
+        if ($fp) fclose($fp);
+        return; // fail-open on FS errors
+    }
+
+    $d = json_decode(fread($fp, 256), true) ?? ['c' => 0, 'ts' => $now];
+    if ($now - $d['ts'] > $window) { $d = ['c' => 0, 'ts' => $now]; }
+    $d['c']++;
+
+    if ($d['c'] > $max) {
+        flock($fp, LOCK_UN);
+        fclose($fp);
+        http_response_code(429);
+        header('Retry-After: ' . ($window - ($now - $d['ts'])));
+        header('Content-Type: text/plain');
+        exit('Too many requests. Please slow down.');
+    }
+
+    fseek($fp, 0); ftruncate($fp, 0);
+    fwrite($fp, json_encode($d));
+    flock($fp, LOCK_UN);
+    fclose($fp);
+})();
+
 /* ── Validate ID ──────────────────────────────────────── */
 $id = isset($_GET['id']) ? trim($_GET['id']) : '';
 if (!preg_match('/^[0-9a-f]{32}$/', $id)) {
