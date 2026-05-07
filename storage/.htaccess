@@ -1,4 +1,4 @@
 # Block all direct HTTP access to stored photos.
 # Files are served exclusively through download.php.
-Order deny,allow
-Deny from all
+Options -Indexes
+Require all denied

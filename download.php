@@ -7,6 +7,11 @@
  * ?id=<32 hex chars>&dl=1     → force-download the JPEG
  */
 
+/* ── Security headers ─────────────────────────────────── */
+header('X-Content-Type-Options: nosniff');
+header('X-Frame-Options: DENY');
+header('Referrer-Policy: strict-origin-when-cross-origin');
+
 /* ── Validate ID ──────────────────────────────────────── */
 $id = isset($_GET['id']) ? trim($_GET['id']) : '';
 if (!preg_match('/^[0-9a-f]{32}$/', $id)) {

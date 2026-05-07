@@ -3,6 +3,7 @@
  * gallery.php — admin gallery showing all saved photos,
  * sorted by latest, paginated 9 per page.
  */
+require_once __DIR__ . '/auth.php';
 
 $dir        = __DIR__ . '/storage/photos/';
 $perPage    = 9;
@@ -93,6 +94,22 @@ $host   = $_SERVER['HTTP_HOST'];
             color: var(--th-mid-gray);
             text-transform: uppercase;
         }
+        .btn-logout {
+            font-family: 'Montserrat', sans-serif;
+            font-size: .62rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-decoration: none;
+            padding: 4px 12px;
+            border: 1.5px solid #ccc;
+            color: var(--th-mid-gray);
+            background: transparent;
+            cursor: pointer;
+            border-radius: 2px;
+            transition: background .15s, color .15s;
+        }
+        .btn-logout:hover { background: var(--th-dark-gray); color: #fff; border-color: var(--th-dark-gray); }
 
         /* ── Main content ── */
         .gallery-main {
@@ -497,6 +514,7 @@ $host   = $_SERVER['HTTP_HOST'];
 <div class="gallery-title-bar">
     <span class="gallery-title">Gallery</span>
     <span class="gallery-count"><?= $total ?> photo<?= $total !== 1 ? 's' : '' ?></span>
+    <a href="?logout=1" class="btn-logout">Logout</a>
 </div>
 
 <main class="gallery-main">
