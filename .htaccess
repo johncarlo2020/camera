@@ -5,6 +5,33 @@
 # ── Disable directory listing ──────────────────────────────
 Options -Indexes
 
+# ── Block known attacker IPs ──────────────────────────────
+# POST flood: 182.62.150.241, 115.164.218.61
+<RequireAll>
+    Require all granted
+    Require not ip 182.62.150.241
+    Require not ip 115.164.218.61
+</RequireAll>
+
+# ── Reject abnormally large POST bodies at the Apache level ─
+# Legitimate photo submissions are base64 JPEG ≤ ~2 MB encoded.
+# Attackers were sending 1.7–1.8 MB raw; cap at 3 MB to be safe.
+<IfModule mod_env.c>
+    SetEnvIf Content-Length [0-9]{8,} LARGE_PAYLOAD
+</IfModule>
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{ENV:LARGE_PAYLOAD} 1
+    RewriteCond %{REQUEST_URI} ^/save\.php [NC]
+    RewriteRule ^ - [F,L]
+</IfModule>
+
+# ── Connection / request throttle (mod_reqtimeout) ────────
+# Drop connections that are slow to send headers (slowloris)
+<IfModule mod_reqtimeout.c>
+    RequestReadTimeout header=20-40,MinRate=500 body=20-120,MinRate=500
+</IfModule>
+
 # ── Block access to sensitive files ───────────────────────
 <FilesMatch "(\.git|\.gitignore|\.env|\.htpasswd|composer\.lock|^auth\.php)$">
     Require all denied

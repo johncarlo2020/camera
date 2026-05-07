@@ -15,6 +15,53 @@ header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: DENY');
 header('Referrer-Policy: strict-origin-when-cross-origin');
 
+/* ── Per-IP rate limit for page loads (botnet GET flood) ─
+ * 60 requests per IP per 60 s. Unauthenticated bots hit this
+ * before any session logic, absorbing the flood cheaply.
+ */
+(function () {
+    $ip     = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+    $hash   = hash('sha256', $ip);
+    $dir    = sys_get_temp_dir() . '/cam_page_rl/';
+    $file   = $dir . $hash . '.json';
+    $now    = time();
+    $window = 60;
+    $max    = 60;
+
+    if (!is_dir($dir)) { mkdir($dir, 0700, true); }
+
+    // Probabilistic stale-file cleanup (1-in-100 requests)
+    if (random_int(1, 100) === 1) {
+        foreach (glob($dir . '*.json') as $f) {
+            if (filemtime($f) < $now - $window * 2) { @unlink($f); }
+        }
+    }
+
+    $fp = @fopen($file, 'c+');
+    if (!$fp || !flock($fp, LOCK_EX)) {
+        if ($fp) fclose($fp);
+        return; // fail-open: never block on FS errors
+    }
+
+    $d = json_decode(fread($fp, 256), true) ?? ['c' => 0, 'ts' => $now];
+    if ($now - $d['ts'] > $window) { $d = ['c' => 0, 'ts' => $now]; }
+    $d['c']++;
+
+    if ($d['c'] > $max) {
+        flock($fp, LOCK_UN);
+        fclose($fp);
+        http_response_code(429);
+        header('Retry-After: ' . ($window - ($now - $d['ts'])));
+        header('Content-Type: text/plain');
+        exit('Too many requests.');
+    }
+
+    fseek($fp, 0); ftruncate($fp, 0);
+    fwrite($fp, json_encode($d));
+    flock($fp, LOCK_UN);
+    fclose($fp);
+})();
+
 /* ── Password (bcrypt) ───────────────────────────────── */
 // Default password: gallery2026  ← CHANGE IN PRODUCTION
 define('APP_PASSWORD_HASH', '$2y$12$g/zsPHWFOT2QBvX9sfb3KenigHdckFl.7J.bEYXSBxKnKChmnnrjm');

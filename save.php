@@ -10,11 +10,11 @@ header('X-Frame-Options: DENY');
 header('Referrer-Policy: strict-origin-when-cross-origin');
 
 /* ── Rate limiting ────────────────────────────────────── */
-// Allow 10 requests per IP per 60 seconds.
-define('RL_MAX_REQUESTS', 10);
+// Allow 5 requests per IP per 60 seconds (down from 10).
+define('RL_MAX_REQUESTS', 5);
 define('RL_WINDOW_SECONDS', 60);
-// Hard cap on concurrent request bursts across all IPs.
-define('RL_GLOBAL_MAX', 100);
+// Hard cap across all IPs — tightened from 100 to 30.
+define('RL_GLOBAL_MAX', 30);
 
 function rate_limit_check(): void {
     $ip       = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
@@ -100,8 +100,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 /* ── Reject oversized requests before reading the body ── */
 $contentLength = (int)($_SERVER['CONTENT_LENGTH'] ?? 0);
-// base64 overhead ~33 %; 30 MB raw ≈ 41 MB encoded, add small margin.
-if ($contentLength > 42 * 1024 * 1024) {
+// Attackers used 1.7–1.8 MB payloads. A real A3 collage JPEG at 0.95
+// quality is typically 0.8–2.5 MB raw → base64 ≈ 3.5 MB. Cap at 4 MB.
+if ($contentLength > 4 * 1024 * 1024) {
     http_response_code(413);
     echo json_encode(['error' => 'Request body too large']);
     exit;
